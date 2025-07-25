@@ -33,6 +33,10 @@ class HealthRepositoryImpl @Inject constructor(
             entities.map { mapper.entityToDomain(it) }
         }
     }
+    override suspend fun getHealthDataBetweenDatesSync(startDate: Date, endDate: Date): List<HealthData> {
+        val entities = healthDataDao.getHealthDataBetweenDatesSync(startDate, endDate)
+        return entities.map { mapper.entityToDomain(it) }
+    }
 
     override fun getRecentHealthData(date: Date, limit: Int): Flow<List<HealthData>> {
         return healthDataDao.getRecentHealthData(date, limit).map { entities ->

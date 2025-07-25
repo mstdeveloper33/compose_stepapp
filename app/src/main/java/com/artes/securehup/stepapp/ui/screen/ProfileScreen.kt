@@ -1,9 +1,12 @@
 package com.artes.securehup.stepapp.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -12,15 +15,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.domain.model.Gender
 import com.artes.securehup.stepapp.domain.model.UserProfile
+import com.artes.securehup.stepapp.ui.theme.*
 import com.artes.securehup.stepapp.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -350,93 +356,150 @@ private fun PersonalInfoDialog(
     var weight by remember { mutableStateOf(profile.weight.toString()) }
     var selectedGender by remember { mutableStateOf(profile.gender) }
     
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text("Kişisel Bilgileri Düzenle")
-        },
-        text = {
-            Column(
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Name
-                OutlinedTextField(
+                .wrapContentHeight()
+                .background(
+                    DarkBackground,
+                    RoundedCornerShape(24.dp)
+                )
+                .padding(24.dp)
+        ) {
+            Column {
+                // Header
+                Text(
+                    text = "Kişisel Bilgileri Düzenle",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                
+                Text(
+                    text = "Bilgilerinizi güncelleyin",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                
+                // Name Field
+                CustomDialogInputField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("İsim") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = "İsim",
+                    placeholder = "Adınızı girin"
                 )
                 
-                // Age
-                OutlinedTextField(
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Age and Height Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CustomDialogInputField(
                     value = age,
-                    onValueChange = { age = it },
-                    label = { Text("Yaş") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                
-                // Height
-                OutlinedTextField(
+                        onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 2) age = it },
+                        label = "Yaş",
+                        placeholder = "25",
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    CustomDialogInputField(
                     value = height,
-                    onValueChange = { height = it },
-                    label = { Text("Boy (cm)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        onValueChange = { if (it.matches(Regex("^\\d{0,3}(\\.\\d{0,1})?\$"))) height = it },
+                        label = "Boy (cm)",
+                        placeholder = "175",
+                        keyboardType = KeyboardType.Decimal,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
                 
-                // Weight
-                OutlinedTextField(
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Weight Field
+                CustomDialogInputField(
                     value = weight,
-                    onValueChange = { weight = it },
-                    label = { Text("Kilo (kg)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
+                    onValueChange = { if (it.matches(Regex("^\\d{0,3}(\\.\\d{0,1})?\$"))) weight = it },
+                    label = "Kilo (kg)",
+                    placeholder = "70"
                 )
                 
-                // Gender
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Gender Selection
                 Text(
                     text = "Cinsiyet",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
                 
-                Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Gender.values().forEach { gender ->
-                        Row(
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = (selectedGender == gender),
-                                    onClick = { selectedGender = gender },
-                                    role = Role.RadioButton
+                                .weight(1f)
+                                .height(36.dp)
+                                .background(
+                                    if (selectedGender == gender) NeonGreen else DarkCard,
+                                    RoundedCornerShape(8.dp)
                                 )
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .clickable { selectedGender = gender },
+                            contentAlignment = Alignment.Center
                         ) {
-                            RadioButton(
-                                selected = (selectedGender == gender),
-                                onClick = null
-                            )
                             Text(
                                 text = when(gender) {
                                     Gender.MALE -> "Erkek"
                                     Gender.FEMALE -> "Kadın"
                                     Gender.OTHER -> "Diğer"
                                 },
-                                modifier = Modifier.padding(start = 8.dp)
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = if (selectedGender == gender) DarkBackground else TextPrimary
                             )
                         }
                     }
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .background(DarkCard, RoundedCornerShape(24.dp))
+                            .clickable { onDismiss() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "İptal",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = TextSecondary
+                        )
+                    }
+                    
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .background(NeonGreen, RoundedCornerShape(24.dp))
+                            .clickable {
                     val updatedProfile = profile.copy(
                         name = name,
                         age = age.toIntOrNull() ?: profile.age,
@@ -446,17 +509,73 @@ private fun PersonalInfoDialog(
                     )
                     viewModel.updateProfile(updatedProfile)
                     onDismiss()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Kaydet",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = DarkBackground
+                        )
+                    }
                 }
-            ) {
-                Text("Kaydet")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("İptal")
             }
         }
-    )
+    }
+}
+
+@Composable
+private fun CustomDialogInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String = "",
+    placeholder: String = "",
+    keyboardType: KeyboardType = KeyboardType.Text,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        if (label.isNotEmpty()) {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = TextSecondary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(DarkCard, RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = TextPrimary,
+                    fontSize = 16.sp
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    if (value.isEmpty() && placeholder.isNotEmpty()) {
+                        Text(
+                            text = placeholder,
+                            color = TextTertiary,
+                            fontSize = 16.sp
+                        )
+                    }
+                    innerTextField()
+                }
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -466,67 +585,225 @@ private fun GoalsDialog(
     viewModel: ProfileViewModel,
     onDismiss: () -> Unit
 ) {
+    var selectedGoalType by remember { mutableStateOf(0) } // 0: Adım, 1: Mesafe, 2: Kalori, 3: Aktif Süre
     var stepGoal by remember { mutableStateOf(profile.dailyStepGoal.toString()) }
+    var distanceGoal by remember { mutableStateOf("5") }
     var calorieGoal by remember { mutableStateOf(profile.dailyCalorieGoal.toString()) }
     var activeTimeGoal by remember { mutableStateOf(profile.dailyActiveTimeGoal.toString()) }
-    
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text("Günlük Hedefleri Düzenle")
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = stepGoal,
-                    onValueChange = { stepGoal = it },
-                    label = { Text("Adım Hedefi") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+    var inputError by remember { mutableStateOf("") }
+
+    // Hedef seçenekleri
+    val stepGoals = listOf(
+        Pair("5,000", 5000), Pair("7,500", 7500), Pair("10,000", 10000), Pair("15,000", 15000)
+    )
+    val distanceGoals = listOf(
+        Pair("3 km", 3), Pair("5 km", 5), Pair("7 km", 7), Pair("10 km", 10)
+    )
+    val calorieGoals = listOf(
+        Pair("200", 200), Pair("300", 300), Pair("500", 500), Pair("700", 700)
+    )
+    val activeTimeGoals = listOf(
+        Pair("30 dk", 30), Pair("45 dk", 45), Pair("60 dk", 60), Pair("90 dk", 90)
+    )
+
+    // Maksimum değerler
+    val maxValues = listOf(100_000, 30, 3000, 600) // Adım, Mesafe, Kalori, Süre
+
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(DarkBackground, RoundedCornerShape(24.dp))
+                .padding(24.dp)
+        ) {
+            Column {
+                Text(
+                    text = "Hedeflerimi Düzenle",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                
-                OutlinedTextField(
-                    value = calorieGoal,
-                    onValueChange = { calorieGoal = it },
-                    label = { Text("Kalori Hedefi") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+                Text(
+                    text = "Günlük hedeflerinizi güncelleyin",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
-                
-                OutlinedTextField(
-                    value = activeTimeGoal,
-                    onValueChange = { activeTimeGoal = it },
-                    label = { Text("Aktif Süre (dakika)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+                // Tab
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(DarkCard, RoundedCornerShape(20.dp))
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    listOf("Adım", "Mesafe", "Kalori", "Süre").forEachIndexed { index, title ->
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(if (selectedGoalType == index) NeonGreen else Color.Transparent)
+                                .clickable { selectedGoalType = index }
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = title,
+                                fontSize = 14.sp,
+                                fontWeight = if (selectedGoalType == index) FontWeight.SemiBold else FontWeight.Medium,
+                                color = if (selectedGoalType == index) DarkBackground else TextSecondary
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                // Kartlar ve input
+                val goals: List<Pair<String, Int>>
+                val value: String
+                val setValue: (String) -> Unit
+                val label: String
+                val unit: String
+                val max: Int
+                when (selectedGoalType) {
+                    0 -> { goals = stepGoals; value = stepGoal; setValue = { stepGoal = it }; label = "Adım"; unit = "adım"; max = maxValues[0] }
+                    1 -> { goals = distanceGoals; value = distanceGoal; setValue = { distanceGoal = it }; label = "Mesafe"; unit = "km"; max = maxValues[1] }
+                    2 -> { goals = calorieGoals; value = calorieGoal; setValue = { calorieGoal = it }; label = "Kalori"; unit = "kcal"; max = maxValues[2] }
+                    3 -> { goals = activeTimeGoals; value = activeTimeGoal; setValue = { activeTimeGoal = it }; label = "Süre"; unit = "dk"; max = maxValues[3] }
+                    else -> { goals = stepGoals; value = stepGoal; setValue = { stepGoal = it }; label = "Adım"; unit = "adım"; max = maxValues[0] }
+                }
+                // Kartlar
+                goals.forEachIndexed { index, (labelStr, v) ->
+                    val isSelected = value == v.toString()
+                    val isRecommended = when (selectedGoalType) {
+                        0 -> v == 10000
+                        1 -> v == 5
+                        2 -> v == 300
+                        3 -> v == 60
+                        else -> false
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .background(
+                                when {
+                                    isSelected -> NeonGreen
+                                    isRecommended -> NeonGreen.copy(alpha = 0.1f)
+                                    else -> DarkCard
+                                },
+                                RoundedCornerShape(16.dp)
+                            )
+                            .clickable { setValue(v.toString()) },
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = labelStr,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSelected) DarkBackground else TextPrimary
+                            )
+                            if (isRecommended && !isSelected) {
+                                Text(
+                                    text = "Önerilen",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = NeonGreen,
+                                    modifier = Modifier
+                                        .background(NeonGreen.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                    if (index < goals.size - 1) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                // Input field
+                CustomDialogInputField(
+                    value = value,
+                    onValueChange = {
+                        val filtered = it.filter { c -> c.isDigit() }
+                        val intVal = filtered.toIntOrNull() ?: 0
+                        if (intVal > max) {
+                            setValue(max.toString())
+                            inputError = "Maksimum $max $unit olabilir"
+                        } else {
+                            setValue(filtered)
+                            inputError = ""
+                        }
+                    },
+                    label = "",
+                    placeholder = "Kendi hedefini gir",
+                    keyboardType = KeyboardType.Number
                 )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    val newStepGoal = stepGoal.toIntOrNull() ?: profile.dailyStepGoal
-                    val newCalorieGoal = calorieGoal.toIntOrNull() ?: profile.dailyCalorieGoal
-                    val newActiveTimeGoal = activeTimeGoal.toLongOrNull() ?: profile.dailyActiveTimeGoal
-                    
+                if (inputError.isNotEmpty()) {
+                    Text(
+                        text = inputError,
+                        color = StatusError,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 0.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                // Butonlar
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .background(DarkCard, RoundedCornerShape(24.dp))
+                            .clickable { onDismiss() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "İptal",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = TextSecondary
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .background(NeonGreen, RoundedCornerShape(24.dp))
+                            .clickable {
+                                val newStepGoal = stepGoal.toIntOrNull()?.coerceAtMost(100_000) ?: profile.dailyStepGoal
+                                val newDistanceGoal = distanceGoal.toIntOrNull()?.coerceAtMost(30) ?: 5
+                                val newCalorieGoal = calorieGoal.toIntOrNull()?.coerceAtMost(3000) ?: profile.dailyCalorieGoal
+                                val newActiveTimeGoal = activeTimeGoal.toLongOrNull()?.coerceAtMost(600) ?: profile.dailyActiveTimeGoal
                     viewModel.updateGoals(
                         stepGoal = newStepGoal,
                         calorieGoal = newCalorieGoal,
                         activeTimeGoal = newActiveTimeGoal
                     )
                     onDismiss()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Kaydet",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = DarkBackground
+                        )
+                    }
                 }
-            ) {
-                Text("Kaydet")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("İptal")
             }
         }
-    )
+    }
 } 

@@ -13,6 +13,8 @@ interface HealthRepository {
     
     fun getHealthDataBetweenDates(startDate: Date, endDate: Date): Flow<List<HealthData>>
     
+    suspend fun getHealthDataBetweenDatesSync(startDate: Date, endDate: Date): List<HealthData>
+    
     fun getRecentHealthData(date: Date, limit: Int = 7): Flow<List<HealthData>>
     
     suspend fun getTotalStepsBetweenDates(startDate: Date, endDate: Date): Int

@@ -1,22 +1,33 @@
 package com.artes.securehup.stepapp.ui.screen.onboarding
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.artes.securehup.stepapp.domain.model.Gender
+import com.artes.securehup.stepapp.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalInfoScreen(
     onNavigateNext: (String, Int, Double, Double, Gender) -> Unit,
@@ -38,129 +49,127 @@ fun PersonalInfoScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .background(DarkBackground)
+            .padding(Dimensions.paddingLarge)
             .verticalScroll(rememberScrollState())
     ) {
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
+        
         // Header
         Text(
             text = "Kişisel Bilgileriniz",
-            fontSize = 24.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = TextPrimary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
         
         Text(
-            text = "Size özel hedefler belirleyebilmemiz için birkaç bilgiye ihtiyacımız var.",
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+            text = "Size özel hedefler belirleyebilmemiz için birkaç bilgiye ihtiyacımız var",
+            fontSize = 16.sp,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = Dimensions.paddingSmall,
+                    bottom = Dimensions.paddingExtraLarge
+                )
         )
+        
+        // Progress Bar
+        LinearProgressIndicator(
+            progress = { 0.33f },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.progressBarHeight)
+                .clip(RoundedCornerShape(Dimensions.progressBarHeight / 2)),
+            color = NeonGreen,
+            trackColor = DarkCard,
+        )
+        
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
         
         // Name Field
-        OutlinedTextField(
+        CustomInputField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("İsminiz") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            label = "İsminiz",
+            placeholder = "Adınızı girin"
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
         
-        // Age Field
-        OutlinedTextField(
-            value = age,
-            onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 2) age = it },
-            label = { Text("Yaşınız") },
+        // Age and Height Row
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            supportingText = { Text("18-99 arası") }
-        )
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.paddingSmall + Dimensions.paddingExtraSmall)
+        ) {
+            CustomInputField(
+                value = age,
+                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 2) age = it },
+                label = "Yaş",
+                placeholder = "25",
+                keyboardType = KeyboardType.Number,
+                modifier = Modifier.weight(1f)
+            )
+            
+            CustomInputField(
+                value = height,
+                onValueChange = { if (it.matches(Regex("^\\d{0,3}(\\.\\d{0,1})?\$"))) height = it },
+                label = "Boy (cm)",
+                placeholder = "175",
+                keyboardType = KeyboardType.Decimal,
+                modifier = Modifier.weight(1f)
+            )
+        }
         
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Height Field
-        OutlinedTextField(
-            value = height,
-            onValueChange = { if (it.matches(Regex("^\\d{0,3}(\\.\\d{0,1})?\$"))) height = it },
-            label = { Text("Boyunuz (cm)") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            supportingText = { Text("Örnek: 175") }
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
         
         // Weight Field
-        OutlinedTextField(
+        CustomInputField(
             value = weight,
             onValueChange = { if (it.matches(Regex("^\\d{0,3}(\\.\\d{0,1})?\$"))) weight = it },
-            label = { Text("Kilonuz (kg)") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            supportingText = { Text("Örnek: 70") }
+            label = "Kilo (kg)",
+            placeholder = "70"
         )
         
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimensions.paddingExtraLarge))
         
         // Gender Selection
         Text(
             text = "Cinsiyet",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 12.dp)
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = TextPrimary,
+            modifier = Modifier.padding(bottom = Dimensions.paddingMedium)
         )
         
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimensions.paddingSmall + Dimensions.paddingExtraSmall)
         ) {
             Gender.values().forEach { gender ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = selectedGender == gender,
-                            onClick = { selectedGender = gender },
-                            role = Role.RadioButton
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = selectedGender == gender,
-                        onClick = null
-                    )
-                    Text(
-                        text = when(gender) {
-                            Gender.MALE -> "Erkek"
-                            Gender.FEMALE -> "Kadın"
-                            Gender.OTHER -> "Diğer"
-                        },
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
+                GenderCard(
+                    gender = gender,
+                    isSelected = selectedGender == gender,
+                    onClick = { selectedGender = gender }
+                )
             }
         }
         
         Spacer(modifier = Modifier.weight(1f))
         
-        // Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            OutlinedButton(
-                onClick = onNavigateBack,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Geri")
-            }
-            
-            Button(
-                onClick = {
+        // Continue Button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.buttonHeightLarge)
+                .background(
+                    if (isFormValid) NeonGreen else DarkCard,
+                    RoundedCornerShape(Dimensions.cornerRadiusXLarge)
+                )
+                .clickable(enabled = isFormValid) {
                     if (isFormValid) {
                         onNavigateNext(
                             name,
@@ -171,11 +180,137 @@ fun PersonalInfoScreen(
                         )
                     }
                 },
-                enabled = isFormValid,
-                modifier = Modifier.weight(1f)
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("Devam")
+                Text(
+                    text = "Devam Et",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isFormValid) DarkBackground else TextTertiary
+                )
+                Spacer(modifier = Modifier.width(Dimensions.paddingSmall + Dimensions.paddingExtraSmall))
+                
+                Box(
+                    modifier = Modifier
+                        .size(Dimensions.paddingXXLarge)
+                        .background(
+                            if (isFormValid) Color.White.copy(alpha = 0.2f) else Color.Transparent,
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = null,
+                        tint = if (isFormValid) DarkBackground else TextTertiary,
+                        modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)
+                    )
+                }
             }
+        }
+        
+        Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+    }
+}
+
+@Composable
+private fun CustomInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = TextSecondary,
+            modifier = Modifier.padding(bottom = Dimensions.paddingSmall)
+        )
+        
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.inputFieldHeight)
+                .background(DarkCard, RoundedCornerShape(Dimensions.cornerRadiusMedium)),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimensions.paddingMedium),
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = TextPrimary,
+                    fontSize = 16.sp
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            color = TextTertiary,
+                            fontSize = 16.sp
+                        )
+                    }
+                    innerTextField()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun GenderCard(
+    gender: Gender,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimensions.cardHeightSmall)
+            .background(
+                if (isSelected) NeonGreen else DarkCard,
+                RoundedCornerShape(Dimensions.cornerRadiusMedium)
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.paddingLarge),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null,
+                tint = if (isSelected) DarkBackground else TextSecondary,
+                modifier = Modifier.size(Dimensions.iconSizeMedium)
+            )
+            
+            Spacer(modifier = Modifier.width(Dimensions.paddingMedium))
+            
+            Text(
+                text = when(gender) {
+                    Gender.MALE -> "Erkek"
+                    Gender.FEMALE -> "Kadın"
+                    Gender.OTHER -> "Diğer"
+                },
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = if (isSelected) DarkBackground else TextPrimary
+            )
         }
     }
 } 

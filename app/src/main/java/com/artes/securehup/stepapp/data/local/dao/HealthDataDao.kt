@@ -17,6 +17,9 @@ interface HealthDataDao {
     @Query("SELECT * FROM health_data WHERE date BETWEEN :startDate AND :endDate ORDER BY date ASC")
     fun getHealthDataBetweenDates(startDate: Date, endDate: Date): Flow<List<HealthDataEntity>>
     
+    @Query("SELECT * FROM health_data WHERE date BETWEEN :startDate AND :endDate ORDER BY date ASC")
+    suspend fun getHealthDataBetweenDatesSync(startDate: Date, endDate: Date): List<HealthDataEntity>
+    
     @Query("SELECT * FROM health_data WHERE date >= :date ORDER BY date DESC LIMIT :limit")
     fun getRecentHealthData(date: Date, limit: Int = 7): Flow<List<HealthDataEntity>>
     

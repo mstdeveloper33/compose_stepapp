@@ -33,9 +33,17 @@ class MainActivity : ComponentActivity() {
         val bodySensorsGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             permissions[Manifest.permission.BODY_SENSORS] ?: false
         } else true
+        val notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
+        } else true
         
-        if (activityRecognitionGranted && bodySensorsGranted) {
+        android.util.Log.d("MainActivity", "Permissions - Activity: $activityRecognitionGranted, Body: $bodySensorsGranted, Notification: $notificationGranted")
+        
+        // En azından temel sensör izni varsa başlat
+        if ((activityRecognitionGranted || bodySensorsGranted) && notificationGranted) {
             startStepTracking()
+        } else {
+            android.util.Log.w("MainActivity", "Required permissions not granted")
         }
     }
     
@@ -69,6 +77,14 @@ class MainActivity : ComponentActivity() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) 
                 != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.BODY_SENSORS)
+            }
+        }
+        
+        // Notification izni (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
         

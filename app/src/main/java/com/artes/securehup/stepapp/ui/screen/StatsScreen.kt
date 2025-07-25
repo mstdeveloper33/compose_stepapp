@@ -8,12 +8,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.artes.securehup.stepapp.ui.viewmodel.StatsViewModel
+import java.text.NumberFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: StatsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -28,18 +34,46 @@ fun StatsScreen(
             modifier = Modifier.padding(bottom = 8.dp)
         )
         
-        // Weekly Summary
-        WeeklySummarySection()
-        
-        // Monthly Overview
-        MonthlyOverviewSection()
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            // Weekly Summary
+            uiState.weeklyStats?.let { weeklyStats ->
+                WeeklySummarySection(weeklyStats = weeklyStats)
+            }
+            
+            // Monthly Overview
+            uiState.monthlyStats?.let { monthlyStats ->
+                MonthlyOverviewSection(monthlyStats = monthlyStats)
+            }
+            
+            uiState.error?.let { error ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
         
         Spacer(modifier = Modifier.weight(1f))
     }
 }
 
 @Composable
-private fun WeeklySummarySection() {
+private fun WeeklySummarySection(
+    weeklyStats: com.artes.securehup.stepapp.ui.viewmodel.WeeklyStatsData
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -61,16 +95,16 @@ private fun WeeklySummarySection() {
             ) {
                 WeeklyStatItem(
                     label = "Toplam Adım",
-                    value = "52,340",
-                    change = "+12%",
-                    isPositive = true,
+                    value = NumberFormat.getNumberInstance(Locale("tr", "TR")).format(weeklyStats.totalSteps),
+                    change = "${if (weeklyStats.stepChange >= 0) "+" else ""}${weeklyStats.stepChange}%",
+                    isPositive = weeklyStats.stepChange >= 0,
                     modifier = Modifier.weight(1f)
                 )
                 WeeklyStatItem(
                     label = "Ortalama",
-                    value = "7,477",
-                    change = "-5%",
-                    isPositive = false,
+                    value = NumberFormat.getNumberInstance(Locale("tr", "TR")).format(weeklyStats.averageSteps),
+                    change = "${if (weeklyStats.averageStepsChange >= 0) "+" else ""}${weeklyStats.averageStepsChange}%",
+                    isPositive = weeklyStats.averageStepsChange >= 0,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -83,16 +117,16 @@ private fun WeeklySummarySection() {
             ) {
                 WeeklyStatItem(
                     label = "Mesafe",
-                    value = "38.2 km",
-                    change = "+8%",
-                    isPositive = true,
+                    value = "${String.format(Locale("tr", "TR"), "%.1f", weeklyStats.totalDistance)} km",
+                    change = "${if (weeklyStats.distanceChange >= 0) "+" else ""}${weeklyStats.distanceChange}%",
+                    isPositive = weeklyStats.distanceChange >= 0,
                     modifier = Modifier.weight(1f)
                 )
                 WeeklyStatItem(
                     label = "Kalori",
-                    value = "2,130",
-                    change = "+15%",
-                    isPositive = true,
+                    value = NumberFormat.getNumberInstance(Locale("tr", "TR")).format(weeklyStats.totalCalories),
+                    change = "${if (weeklyStats.calorieChange >= 0) "+" else ""}${weeklyStats.calorieChange}%",
+                    isPositive = weeklyStats.calorieChange >= 0,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -134,7 +168,9 @@ private fun WeeklyStatItem(
 }
 
 @Composable
-private fun MonthlyOverviewSection() {
+private fun MonthlyOverviewSection(
+    monthlyStats: com.artes.securehup.stepapp.ui.viewmodel.MonthlyStatsData
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -152,23 +188,23 @@ private fun MonthlyOverviewSection() {
             
             MonthlyStatRow(
                 label = "En İyi Gün",
-                value = "12,450 adım",
-                detail = "15 Ocak"
+                value = monthlyStats.bestDay,
+                detail = monthlyStats.bestDayDate
             )
             
             Spacer(modifier = Modifier.height(8.dp))
             
             MonthlyStatRow(
                 label = "Aktif Gün",
-                value = "22 gün",
-                detail = "Bu ay"
+                value = "${monthlyStats.activeDays} gün",
+                detail = "Bu ay (${monthlyStats.totalDays} günden)"
             )
             
             Spacer(modifier = Modifier.height(8.dp))
             
             MonthlyStatRow(
                 label = "Ortalama Adım",
-                value = "8,240",
+                value = NumberFormat.getNumberInstance(Locale("tr", "TR")).format(monthlyStats.averageSteps),
                 detail = "Günlük"
             )
         }

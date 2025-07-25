@@ -1,20 +1,32 @@
 package com.artes.securehup.stepapp.ui.screen.onboarding
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.artes.securehup.stepapp.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalsScreen(
     onComplete: (Int, Int, Long) -> Unit,
@@ -22,188 +34,308 @@ fun GoalsScreen(
     modifier: Modifier = Modifier
 ) {
     var stepGoal by remember { mutableStateOf("10000") }
-    var calorieGoal by remember { mutableStateOf("2000") }
+    var calorieGoal by remember { mutableStateOf("300") }
     var activeTimeGoal by remember { mutableStateOf("60") }
+    var distanceGoal by remember { mutableStateOf("5") }
+    var selectedGoalIndex by remember { mutableStateOf(0) }
     
-    val isFormValid = stepGoal.isNotBlank() && 
-                     calorieGoal.isNotBlank() && 
-                     activeTimeGoal.isNotBlank()
+    // Hedef seçenekleri
+    val stepGoals = listOf(
+        GoalData("5,000", "Başlangıç seviyesi", false, 5000),
+        GoalData("7,500", "Orta seviye", false, 7500),
+        GoalData("10,000", "Aktif seviye", true, 10000),
+        GoalData("15,000", "Sporcu seviyesi", false, 15000)
+    )
+    
+    val distanceGoals = listOf(
+        GoalData("3 km", "Başlangıç seviyesi", false, 3),
+        GoalData("5 km", "Orta seviye", true, 5),
+        GoalData("7 km", "İleri seviye", false, 7),
+        GoalData("10 km", "Sporcu seviyesi", false, 10)
+    )
+    
+    val calorieGoals = listOf(
+        GoalData("200", "Başlangıç seviyesi", false, 200),
+        GoalData("300", "Orta seviye", true, 300),
+        GoalData("500", "Aktif seviye", false, 500),
+        GoalData("700", "Sporcu seviyesi", false, 700)
+    )
+    
+    val activeTimeGoals = listOf(
+        GoalData("30 dk", "Başlangıç seviyesi", false, 30),
+        GoalData("45 dk", "Orta seviye", false, 45),
+        GoalData("60 dk", "Aktif seviye", true, 60),
+        GoalData("90 dk", "Sporcu seviyesi", false, 90)
+    )
+    
+    val currentGoals = when (selectedGoalIndex) {
+        0 -> stepGoals
+        1 -> distanceGoals
+        2 -> calorieGoals
+        3 -> activeTimeGoals
+        else -> stepGoals
+    }
     
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .background(DarkBackground)
+            .padding(Dimensions.paddingLarge)
             .verticalScroll(rememberScrollState())
     ) {
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
+        
         // Header
         Text(
-            text = "Günlük Hedefleriniz",
-            fontSize = 24.sp,
+            text = "Hedeflerimi Düzenle",
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = TextPrimary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
         
         Text(
-            text = "Size uygun günlük hedefler belirleyin. Bu hedefleri daha sonra değiştirebilirsiniz.",
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+            text = "Sağlıklı bir yaşam için günlük hedeflerinizi belirleyin",
+            fontSize = 16.sp,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = Dimensions.paddingSmall,
+                    bottom = Dimensions.paddingExtraLarge
+                )
         )
         
-        // Goals Cards
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+        // Progress Bar
+        LinearProgressIndicator(
+            progress = { 0.67f },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.progressBarHeight)
+                .clip(RoundedCornerShape(Dimensions.progressBarHeight / 2)),
+            color = NeonGreen,
+            trackColor = DarkCard,
+        )
+        
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
+        
+        // Goal Type Selector
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(DarkCard, RoundedCornerShape(Dimensions.cornerRadiusLarge + Dimensions.paddingExtraSmall))
+                .padding(Dimensions.paddingExtraSmall),
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.paddingExtraSmall)
         ) {
-            // Step Goal
-            GoalCard(
-                title = "Günlük Adım Hedefi",
-                description = "Günde kaç adım atmak istiyorsunuz?",
-                emoji = "👟",
-                value = stepGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 6) stepGoal = it },
-                suffix = "adım",
-                recommendation = "Önerilen: 8,000-12,000"
+            GoalTypeTab(
+                text = "Adım",
+                icon = Icons.Default.Favorite,
+                isSelected = selectedGoalIndex == 0,
+                onClick = { selectedGoalIndex = 0 },
+                modifier = Modifier.weight(1f)
             )
-            
-            // Calorie Goal
-            GoalCard(
-                title = "Günlük Kalori Hedefi",
-                description = "Günde kaç kalori yakmayı hedefliyorsunuz?",
-                emoji = "🔥",
-                value = calorieGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 5) calorieGoal = it },
-                suffix = "kalori",
-                recommendation = "Önerilen: 1,800-2,500"
+            GoalTypeTab(
+                text = "Mesafe",
+                icon = Icons.Default.Favorite,
+                isSelected = selectedGoalIndex == 1,
+                onClick = { selectedGoalIndex = 1 },
+                modifier = Modifier.weight(1f)
             )
-            
-            // Active Time Goal
-            GoalCard(
-                title = "Günlük Aktif Süre",
-                description = "Günde kaç dakika aktif olmak istiyorsunuz?",
-                emoji = "⏱️",
-                value = activeTimeGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 3) activeTimeGoal = it },
-                suffix = "dakika",
-                recommendation = "Önerilen: 30-90"
+            GoalTypeTab(
+                text = "Kalori",
+                icon = Icons.Default.Star,
+                isSelected = selectedGoalIndex == 2,
+                onClick = { selectedGoalIndex = 2 },
+                modifier = Modifier.weight(1f)
+            )
+            GoalTypeTab(
+                text = "Süre",
+                icon = Icons.Default.Home,
+                isSelected = selectedGoalIndex == 3,
+                onClick = { selectedGoalIndex = 3 },
+                modifier = Modifier.weight(1f)
             )
         }
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(Dimensions.paddingExtraLarge))
         
-        // Info Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+        // Goal Cards
+        currentGoals.forEachIndexed { index, goal ->
+            GoalLevelCard(
+                title = goal.label,
+                subtitle = goal.description,
+                isRecommended = goal.isRecommended,
+                isSelected = false,
+                onClick = { 
+                    when (selectedGoalIndex) {
+                        0 -> stepGoal = goal.value.toString()
+                        1 -> distanceGoal = goal.value.toString()
+                        2 -> calorieGoal = goal.value.toString()
+                        3 -> activeTimeGoal = goal.value.toString()
+                    }
+                }
             )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "💡 İpucu",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = "Hedeflerinizi gerçekçi belirleyin ve zamanla artırın. Başarı sürekli küçük adımlarla gelir!",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+            
+            if (index < currentGoals.size - 1) {
+                Spacer(modifier = Modifier.height(Dimensions.paddingSmall + Dimensions.paddingExtraSmall))
             }
         }
         
         Spacer(modifier = Modifier.weight(1f))
         
-        // Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            OutlinedButton(
-                onClick = onNavigateBack,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Geri")
-            }
-            
-            Button(
-                onClick = {
-                    if (isFormValid) {
-                        onComplete(
-                            stepGoal.toInt(),
-                            calorieGoal.toInt(),
-                            activeTimeGoal.toLong()
-                        )
-                    }
+        // Continue Button
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimensions.buttonHeightLarge)
+                .background(NeonGreen, RoundedCornerShape(Dimensions.cornerRadiusXLarge))
+                .clickable {
+                    onComplete(
+                        stepGoal.toIntOrNull() ?: 10000,
+                        calorieGoal.toIntOrNull() ?: 300,
+                        activeTimeGoal.toLongOrNull() ?: 60
+                    )
                 },
-                enabled = isFormValid,
-                modifier = Modifier.weight(1f)
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("Tamamla")
+                Text(
+                    text = "Hedefin",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = DarkBackground
+                )
+                Spacer(modifier = Modifier.width(Dimensions.paddingSmall + Dimensions.paddingExtraSmall))
+                
+                Box(
+                    modifier = Modifier
+                        .size(Dimensions.paddingXXLarge)
+                        .background(Color.White.copy(alpha = 0.2f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = null,
+                        tint = DarkBackground,
+                        modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)
+                    )
+                }
             }
+        }
+        
+        Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+    }
+}
+
+@Composable
+private fun GoalTypeTab(
+    text: String,
+    icon: ImageVector,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(Dimensions.cornerRadiusMedium))
+            .background(
+                if (isSelected) NeonGreen else Color.Transparent
+            )
+            .clickable { onClick() }
+            .padding(vertical = Dimensions.paddingMedium),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (isSelected) DarkBackground else TextSecondary,
+                modifier = Modifier.size(Dimensions.iconSizeMedium)
+            )
+            Spacer(modifier = Modifier.height(Dimensions.paddingExtraSmall))
+            Text(
+                text = text,
+                fontSize = 14.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                color = if (isSelected) DarkBackground else TextSecondary,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
 @Composable
-private fun GoalCard(
+private fun GoalLevelCard(
     title: String,
-    description: String,
-    emoji: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    suffix: String,
-    recommendation: String
+    subtitle: String,
+    isRecommended: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimensions.cardHeightMedium)
+            .background(
+                color = if (isRecommended) NeonGreen else DarkCard,
+                shape = RoundedCornerShape(Dimensions.cornerRadiusLarge)
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.CenterStart
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.paddingLarge),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
+            Column {
                 Text(
-                    text = emoji,
+                    text = title,
                     fontSize = 24.sp,
-                    modifier = Modifier.padding(end = 12.dp)
+                    fontWeight = FontWeight.Bold,
+                    color = if (isRecommended) DarkBackground else TextPrimary
                 )
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = title,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = description,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Text(
+                    text = subtitle,
+                    fontSize = 14.sp,
+                    color = if (isRecommended) DarkBackground.copy(alpha = 0.7f) else TextSecondary
+                )
             }
             
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                suffix = { Text(suffix) },
-                singleLine = true
-            )
-            
-            Text(
-                text = recommendation,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 4.dp),
-                textAlign = TextAlign.End
-            )
+            if (isRecommended) {
+                Text(
+                    text = "Önerilen",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = DarkBackground,
+                    modifier = Modifier
+                        .background(
+                            Color.Black.copy(alpha = 0.1f),
+                            RoundedCornerShape(Dimensions.cornerRadiusSmall)
+                        )
+                        .padding(
+                            horizontal = Dimensions.paddingSmall,
+                            vertical = Dimensions.paddingExtraSmall
+                        )
+                )
+            }
         }
     }
-} 
+}
+
+private data class GoalData(
+    val label: String,
+    val description: String,
+    val isRecommended: Boolean,
+    val value: Int
+) 
