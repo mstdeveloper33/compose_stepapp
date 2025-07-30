@@ -1,5 +1,6 @@
 package com.artes.securehup.stepapp.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,7 +23,7 @@ import com.artes.securehup.stepapp.ui.viewmodel.ProfileViewModel
 fun GoalsEditScreen(
     onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val profile = uiState.userProfile

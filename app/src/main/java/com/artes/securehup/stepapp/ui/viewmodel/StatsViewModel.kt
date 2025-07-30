@@ -41,6 +41,9 @@ class StatsViewModel @Inject constructor(
                 // Kullanıcı profili al
                 val userProfile = manageUserProfileUseCase.getUserProfile()
                 
+                // Bugünün verilerini al
+                val todayHealthData = getTodayHealthDataUseCase()
+                
                 // Bu haftanın verilerini al
                 val weeklyStats = calculateWeeklyStats()
                 
@@ -50,6 +53,7 @@ class StatsViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     userProfile = userProfile,
+                    todayHealthData = todayHealthData,
                     weeklyStats = weeklyStats,
                     monthlyStats = monthlyStats
                 )
@@ -192,11 +196,82 @@ class StatsViewModel @Inject constructor(
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
+
+    suspend fun getLast7DaysData(type: Int): List<Pair<String, Int>> {
+        return try {
+            val calendar = Calendar.getInstance()
+            val data = mutableListOf<Pair<String, Int>>()
+            
+            // Son 7 günün verilerini al
+            for (i in 6 downTo 0) {
+                calendar.add(Calendar.DAY_OF_YEAR, -i)
+                val date = calendar.time
+                val dateString = SimpleDateFormat("d", Locale.getDefault()).format(date)
+                
+                // Bu tarihteki veriyi al
+                val healthData = healthRepository.getHealthDataByDateSync(date)
+                val value = when (type) {
+                    0 -> healthData?.steps ?: 0
+                    1 -> healthData?.calories ?: 0
+                    2 -> (healthData?.distance?.toInt() ?: 0)
+                    else -> (healthData?.activeTime?.toInt() ?: 0)
+                }
+                
+                data.add(dateString to value)
+                calendar.add(Calendar.DAY_OF_YEAR, i) // Takvimi geri al
+            }
+            
+            data
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getDataForSelectedDateRange(type: Int, selectedDate: Date): List<Pair<String, Int>> {
+        return try {
+            val calendar = Calendar.getInstance()
+            calendar.time = selectedDate
+            
+            // Seçilen tarihten geriye doğru 14 gün al
+            val data = mutableListOf<Pair<String, Int>>()
+            
+            for (i in 13 downTo 0) {
+                calendar.add(Calendar.DAY_OF_YEAR, -i)
+                val date = calendar.time
+                val dateString = SimpleDateFormat("d", Locale.getDefault()).format(date)
+                
+                // Bu tarihteki veriyi al
+                val healthData = healthRepository.getHealthDataByDateSync(date)
+                val value = when (type) {
+                    0 -> healthData?.steps ?: 0
+                    1 -> healthData?.calories ?: 0
+                    2 -> (healthData?.distance?.toInt() ?: 0)
+                    else -> (healthData?.activeTime?.toInt() ?: 0)
+                }
+                
+                data.add(dateString to value)
+                calendar.add(Calendar.DAY_OF_YEAR, i) // Takvimi geri al
+            }
+            
+            data
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getHealthDataForDate(date: Date): HealthData? {
+        return try {
+            healthRepository.getHealthDataByDateSync(date)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
 
 data class StatsUiState(
     val isLoading: Boolean = false,
     val userProfile: UserProfile? = null,
+    val todayHealthData: HealthData? = null,
     val weeklyStats: WeeklyStatsData? = null,
     val monthlyStats: MonthlyStatsData? = null,
     val error: String? = null

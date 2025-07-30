@@ -204,7 +204,11 @@ class StepTrackingService : Service(), SensorEventListener {
             val intent = Intent(context, StepTrackingService::class.java).apply {
                 action = ACTION_START_TRACKING
             }
-            context.startForegroundService(intent)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
         
         fun stopService(context: Context) {

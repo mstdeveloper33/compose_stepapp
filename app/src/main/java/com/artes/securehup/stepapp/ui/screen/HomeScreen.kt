@@ -2,30 +2,36 @@ package com.artes.securehup.stepapp.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.draw.clip
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.ui.viewmodel.HomeViewModel
+import com.artes.stepapp.R
 
 private val StepColor = Color(0xFFB6E94B)
 private val CalorieColor = Color(0xFFFFA940)
@@ -49,30 +55,39 @@ fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        Text(
+            text = "Bugün ne yapıyorsun?",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+
         StatCard(
-            icon = Icons.Filled.Place,
+            icon = R.drawable.step,
             iconBg = StepColor,
             title = "Adımlar",
             value = (todayData?.steps ?: 0),
             goal = (profile?.dailyStepGoal ?: 15000),
             unit = "",
-            percent = (todayData?.steps?.toFloat() ?: 0f) / (profile?.dailyStepGoal?.toFloat() ?: 15000f),
+            percent = (todayData?.steps?.toFloat() ?: 0f) / (profile?.dailyStepGoal?.toFloat()
+                ?: 15000f),
             cardColor = StepColor,
             onAction = { /* TODO: Harekete geç! */ }
         )
         StatCard(
-            icon = Icons.Filled.Place,
+            icon = R.drawable.fire,
             iconBg = CalorieColor,
             title = "Kaloriler",
             value = (todayData?.calories ?: 0),
             goal = (profile?.dailyCalorieGoal ?: 300),
             unit = "",
-            percent = (todayData?.calories?.toFloat() ?: 0f) / (profile?.dailyCalorieGoal?.toFloat() ?: 300f),
+            percent = (todayData?.calories?.toFloat() ?: 0f) / (profile?.dailyCalorieGoal?.toFloat()
+                ?: 300f),
             cardColor = CalorieColor,
             onAction = { /* TODO: Harekete geç! */ }
         )
         StatCard(
-            icon = Icons.Filled.Place,
+            icon = R.drawable.km,
             iconBg = DistanceColor,
             title = "Mesafe",
             value = (todayData?.distance?.toInt() ?: 0),
@@ -83,13 +98,14 @@ fun HomeScreen(
             onAction = { /* TODO: Harekete geç! */ }
         )
         StatCard(
-            icon = Icons.Filled.Place,
+            icon = R.drawable.clock,
             iconBg = ActiveColor,
             title = "Aktif Süre",
             value = (todayData?.activeTime ?: 0).toInt(),
             goal = (profile?.dailyActiveTimeGoal?.toInt() ?: 45),
             unit = "dk",
-            percent = (todayData?.activeTime?.toFloat() ?: 0f) / (profile?.dailyActiveTimeGoal?.toFloat() ?: 45f),
+            percent = (todayData?.activeTime?.toFloat()
+                ?: 0f) / (profile?.dailyActiveTimeGoal?.toFloat() ?: 45f),
             cardColor = ActiveColor,
             onAction = { /* TODO: Harekete geç! */ }
         )
@@ -98,7 +114,7 @@ fun HomeScreen(
 
 @Composable
 private fun StatCard(
-    icon: ImageVector,
+    icon: Int,
     iconBg: Color,
     title: String,
     value: Int,
@@ -126,7 +142,7 @@ private fun StatCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = icon,
+                        painter = painterResource(id = icon),
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.size(24.dp)
@@ -193,4 +209,4 @@ private fun StatCard(
             )
         }
     }
-} 
+}

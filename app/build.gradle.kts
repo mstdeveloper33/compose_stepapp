@@ -82,4 +82,7 @@ dependencies {
     
     // Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    
+    // Charts
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

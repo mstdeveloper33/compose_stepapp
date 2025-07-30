@@ -11,6 +11,8 @@ interface HealthRepository {
     
     suspend fun getHealthDataByDate(date: Date): HealthData?
     
+    suspend fun getHealthDataByDateSync(date: Date): HealthData?
+    
     fun getHealthDataBetweenDates(startDate: Date, endDate: Date): Flow<List<HealthData>>
     
     suspend fun getHealthDataBetweenDatesSync(startDate: Date, endDate: Date): List<HealthData>
