@@ -30,6 +30,7 @@ class OnboardingViewModel @Inject constructor(
         gender: Gender,
         stepGoal: Int,
         calorieGoal: Int,
+        distanceGoal: Int,
         activeTimeGoal: Long
     ) {
         viewModelScope.launch {
@@ -46,6 +47,7 @@ class OnboardingViewModel @Inject constructor(
                     gender = gender,
                     dailyStepGoal = stepGoal,
                     dailyCalorieGoal = calorieGoal,
+                    dailyDistanceGoal = distanceGoal.toDouble(),
                     dailyActiveTimeGoal = activeTimeGoal,
                     createdAt = Date(),
                     updatedAt = Date()

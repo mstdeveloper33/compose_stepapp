@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.artes.securehup.stepapp.ui.screen.HomeScreen
 import com.artes.securehup.stepapp.ui.screen.StatsScreen
 import com.artes.securehup.stepapp.ui.screen.ProfileScreen
@@ -28,17 +29,45 @@ fun AppNavigation(
             HealthBottomNavigation(
                 currentRoute = currentRoute,
                 onNavigate = { route ->
-                    navController.navigate(route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    when (route) {
+                        BottomNavItem.Home.route -> {
+                            // Anasayfaya giderken stats sayfasından çık
+                            if (currentRoute?.startsWith("stats/") == true) {
+                                navController.navigate(route) {
+                                    popUpTo("stats/0") {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
+                            } else {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
+                        BottomNavItem.Stats.route -> {
+                            // Stats sayfasına git
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                        else -> {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     }
                 }
             )
@@ -50,11 +79,57 @@ fun AppNavigation(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(BottomNavItem.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    onNavigateToStats = { selectedTab ->
+                        navController.navigate("stats/$selectedTab") {
+                            // Stats sayfasına giderken anasayfayı back stack'ten çıkar
+                            popUpTo(BottomNavItem.Home.route) {
+                                saveState = true
+                            }
+                            // Yeni bir instance oluştur
+                            launchSingleTop = true
+                            // State'i geri yükle
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+            
+            composable(
+                route = "stats/{selectedTab}",
+                arguments = listOf(
+                    navArgument("selectedTab") {
+                        type = androidx.navigation.NavType.IntType
+                        defaultValue = 0
+                    }
+                )
+            ) { backStackEntry ->
+                val selectedTab = backStackEntry.arguments?.getInt("selectedTab") ?: 0
+                StatsScreen(
+                    initialSelectedTab = selectedTab,
+                    onNavigateBack = {
+                        navController.navigate(BottomNavItem.Home.route) {
+                            popUpTo("stats/$selectedTab") {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
             
             composable(BottomNavItem.Stats.route) {
-                StatsScreen()
+                StatsScreen(
+                    initialSelectedTab = 0,
+                    onNavigateBack = {
+                        navController.navigate(BottomNavItem.Home.route) {
+                            popUpTo(BottomNavItem.Stats.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
             
             composable(BottomNavItem.Profile.route) {

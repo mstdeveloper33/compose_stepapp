@@ -22,6 +22,9 @@ interface UserProfileDao {
     @Query("UPDATE user_profile SET dailyStepGoal = :stepGoal WHERE id = 1")
     suspend fun updateStepGoal(stepGoal: Int)
     
+    @Query("UPDATE user_profile SET dailyDistanceGoal = :distanceGoal WHERE id = 1")
+    suspend fun updateDistanceGoal(distanceGoal: Double)
+    
     @Query("UPDATE user_profile SET dailyCalorieGoal = :calorieGoal WHERE id = 1")
     suspend fun updateCalorieGoal(calorieGoal: Int)
     

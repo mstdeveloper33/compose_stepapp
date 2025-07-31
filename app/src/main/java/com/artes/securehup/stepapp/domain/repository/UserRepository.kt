@@ -16,6 +16,8 @@ interface UserRepository {
     
     suspend fun updateStepGoal(stepGoal: Int)
     
+    suspend fun updateDistanceGoal(distanceGoal: Double)
+    
     suspend fun updateCalorieGoal(calorieGoal: Int)
     
     suspend fun updateActiveTimeGoal(activeTimeGoal: Long)

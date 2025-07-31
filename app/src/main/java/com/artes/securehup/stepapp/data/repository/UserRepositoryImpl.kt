@@ -42,6 +42,10 @@ class UserRepositoryImpl @Inject constructor(
         userProfileDao.updateStepGoal(stepGoal)
     }
 
+    override suspend fun updateDistanceGoal(distanceGoal: Double) {
+        userProfileDao.updateDistanceGoal(distanceGoal)
+    }
+
     override suspend fun updateCalorieGoal(calorieGoal: Int) {
         userProfileDao.updateCalorieGoal(calorieGoal)
     }
@@ -72,6 +76,7 @@ class UserRepositoryImpl @Inject constructor(
                 weight = 70.0,
                 gender = Gender.OTHER,
                 dailyStepGoal = 10000,
+                dailyDistanceGoal = 7.0,
                 dailyCalorieGoal = 2000,
                 dailyActiveTimeGoal = 60
             )

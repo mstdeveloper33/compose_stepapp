@@ -10,6 +10,7 @@ data class UserProfile(
     val weight: Double, // kg cinsinden
     val gender: Gender,
     val dailyStepGoal: Int = 10000,
+    val dailyDistanceGoal: Double = 7.0, // km cinsinden
     val dailyCalorieGoal: Int = 2000,
     val dailyActiveTimeGoal: Long = 60, // dakika
     val createdAt: Date = Date(),

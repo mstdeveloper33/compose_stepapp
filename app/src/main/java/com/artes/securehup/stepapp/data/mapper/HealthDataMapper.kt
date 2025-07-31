@@ -1,12 +1,9 @@
 package com.artes.securehup.stepapp.data.mapper
 
 import com.artes.securehup.stepapp.data.local.entity.HealthDataEntity
-import com.artes.securehup.stepapp.data.local.entity.UserProfileEntity
 import com.artes.securehup.stepapp.data.local.entity.WeeklyStatsEntity
 import com.artes.securehup.stepapp.domain.model.HealthData
-import com.artes.securehup.stepapp.domain.model.UserProfile
 import com.artes.securehup.stepapp.domain.model.WeeklyStats
-import com.artes.securehup.stepapp.domain.model.Gender
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,41 +35,7 @@ class HealthDataMapper @Inject constructor() {
     }
 }
 
-@Singleton
-class UserProfileMapper @Inject constructor() {
-    
-    fun entityToDomain(entity: UserProfileEntity): UserProfile {
-        return UserProfile(
-            id = entity.id,
-            name = entity.name,
-            age = entity.age,
-            height = entity.height,
-            weight = entity.weight,
-            gender = Gender.valueOf(entity.gender),
-            dailyStepGoal = entity.dailyStepGoal,
-            dailyCalorieGoal = entity.dailyCalorieGoal,
-            dailyActiveTimeGoal = entity.dailyActiveTimeGoal,
-            createdAt = entity.createdAt,
-            updatedAt = entity.updatedAt
-        )
-    }
-    
-    fun domainToEntity(domain: UserProfile): UserProfileEntity {
-        return UserProfileEntity(
-            id = domain.id,
-            name = domain.name,
-            age = domain.age,
-            height = domain.height,
-            weight = domain.weight,
-            gender = domain.gender.name,
-            dailyStepGoal = domain.dailyStepGoal,
-            dailyCalorieGoal = domain.dailyCalorieGoal,
-            dailyActiveTimeGoal = domain.dailyActiveTimeGoal,
-            createdAt = domain.createdAt,
-            updatedAt = domain.updatedAt
-        )
-    }
-}
+
 
 @Singleton
 class WeeklyStatsMapper @Inject constructor() {

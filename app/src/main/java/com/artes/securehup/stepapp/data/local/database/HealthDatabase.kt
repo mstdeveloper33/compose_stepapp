@@ -18,7 +18,7 @@ import com.artes.securehup.stepapp.data.local.entity.WeeklyStatsEntity
         UserProfileEntity::class,
         WeeklyStatsEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(DateConverter::class)

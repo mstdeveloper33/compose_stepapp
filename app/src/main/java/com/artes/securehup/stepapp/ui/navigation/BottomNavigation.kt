@@ -18,9 +18,9 @@ sealed class BottomNavItem(
     )
 
     object Stats : BottomNavItem(
-        route = "stats",
+        route = "stats/0",
         title = "İstatistikler",
-        icon = Icons.Default.Person
+        icon = Icons.Default.DateRange
     )
 
     object Profile : BottomNavItem(
@@ -53,7 +53,11 @@ fun HealthBottomNavigation(
                 label = {
                     Text(text = item.title)
                 },
-                selected = currentRoute == item.route,
+                selected = when {
+                    item == BottomNavItem.Home -> currentRoute == item.route
+                    item == BottomNavItem.Stats -> currentRoute?.startsWith("stats/") == true
+                    else -> currentRoute == item.route
+                },
                 onClick = {
                     onNavigate(item.route)
                 }

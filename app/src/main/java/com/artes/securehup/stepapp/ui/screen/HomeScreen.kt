@@ -41,6 +41,7 @@ private val CardBg = Color(0xFF181818)
 
 @Composable
 fun HomeScreen(
+    onNavigateToStats: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -72,7 +73,7 @@ fun HomeScreen(
             percent = (todayData?.steps?.toFloat() ?: 0f) / (profile?.dailyStepGoal?.toFloat()
                 ?: 15000f),
             cardColor = StepColor,
-            onAction = { /* TODO: Harekete geç! */ }
+            onAction = { onNavigateToStats(0) }
         )
         StatCard(
             icon = R.drawable.fire,
@@ -84,18 +85,18 @@ fun HomeScreen(
             percent = (todayData?.calories?.toFloat() ?: 0f) / (profile?.dailyCalorieGoal?.toFloat()
                 ?: 300f),
             cardColor = CalorieColor,
-            onAction = { /* TODO: Harekete geç! */ }
+            onAction = { onNavigateToStats(1) }
         )
         StatCard(
             icon = R.drawable.km,
             iconBg = DistanceColor,
             title = "Mesafe",
             value = (todayData?.distance?.toInt() ?: 0),
-            goal = 7, // profile?.dailyDistanceGoal?.toInt() ?: 7,
+            goal = (profile?.dailyDistanceGoal?.toInt() ?: 7),
             unit = "",
-            percent = (todayData?.distance?.toFloat() ?: 0f) / 7f,
+            percent = (todayData?.distance?.toFloat() ?: 0f) / (profile?.dailyDistanceGoal?.toFloat() ?: 7f),
             cardColor = DistanceColor,
-            onAction = { /* TODO: Harekete geç! */ }
+            onAction = { onNavigateToStats(2) }
         )
         StatCard(
             icon = R.drawable.clock,
@@ -107,7 +108,7 @@ fun HomeScreen(
             percent = (todayData?.activeTime?.toFloat()
                 ?: 0f) / (profile?.dailyActiveTimeGoal?.toFloat() ?: 45f),
             cardColor = ActiveColor,
-            onAction = { /* TODO: Harekete geç! */ }
+            onAction = { onNavigateToStats(3) }
         )
     }
 }

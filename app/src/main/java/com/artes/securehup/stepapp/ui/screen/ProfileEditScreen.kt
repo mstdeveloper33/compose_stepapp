@@ -36,9 +36,6 @@ fun ProfileEditScreen(
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var selectedGender by remember { mutableStateOf<Gender?>(null) }
-    var stepGoal by remember { mutableStateOf("") }
-    var calorieGoal by remember { mutableStateOf("") }
-    var activeTimeGoal by remember { mutableStateOf("") }
     
     // Initialize form with existing profile data
     LaunchedEffect(profile) {
@@ -48,9 +45,6 @@ fun ProfileEditScreen(
             height = it.height.toString()
             weight = it.weight.toString()
             selectedGender = it.gender
-            stepGoal = it.dailyStepGoal.toString()
-            calorieGoal = it.dailyCalorieGoal.toString()
-            activeTimeGoal = it.dailyActiveTimeGoal.toString()
         }
     }
     
@@ -58,10 +52,7 @@ fun ProfileEditScreen(
                      age.isNotBlank() && 
                      height.isNotBlank() && 
                      weight.isNotBlank() && 
-                     selectedGender != null &&
-                     stepGoal.isNotBlank() &&
-                     calorieGoal.isNotBlank() &&
-                     activeTimeGoal.isNotBlank()
+                     selectedGender != null
     
     Scaffold(
         topBar = {
@@ -173,50 +164,6 @@ fun ProfileEditScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Goals Section
-            Text(
-                text = "Günlük Hedefler",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            
-            OutlinedTextField(
-                value = stepGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 6) stepGoal = it },
-                label = { Text("Adım Hedefi") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                suffix = { Text("adım") }
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            OutlinedTextField(
-                value = calorieGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 5) calorieGoal = it },
-                label = { Text("Kalori Hedefi") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                suffix = { Text("kalori") }
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            OutlinedTextField(
-                value = activeTimeGoal,
-                onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 3) activeTimeGoal = it },
-                label = { Text("Aktif Süre Hedefi") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                suffix = { Text("dakika") }
-            )
-            
             Spacer(modifier = Modifier.height(32.dp))
             
             // Save Button
@@ -228,10 +175,7 @@ fun ProfileEditScreen(
                             age = age.toInt(),
                             height = height.toDouble(),
                             weight = weight.toDouble(),
-                            gender = selectedGender!!,
-                            dailyStepGoal = stepGoal.toInt(),
-                            dailyCalorieGoal = calorieGoal.toInt(),
-                            dailyActiveTimeGoal = activeTimeGoal.toLong()
+                            gender = selectedGender!!
                         )
                         viewModel.updateProfile(updatedProfile)
                     }

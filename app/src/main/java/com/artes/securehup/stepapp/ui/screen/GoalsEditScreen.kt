@@ -29,6 +29,7 @@ fun GoalsEditScreen(
     val profile = uiState.userProfile
     
     var stepGoal by remember { mutableStateOf("") }
+    var distanceGoal by remember { mutableStateOf("") }
     var calorieGoal by remember { mutableStateOf("") }
     var activeTimeGoal by remember { mutableStateOf("") }
     
@@ -36,12 +37,14 @@ fun GoalsEditScreen(
     LaunchedEffect(profile) {
         profile?.let {
             stepGoal = it.dailyStepGoal.toString()
+            distanceGoal = it.dailyDistanceGoal.toString()
             calorieGoal = it.dailyCalorieGoal.toString()
             activeTimeGoal = it.dailyActiveTimeGoal.toString()
         }
     }
     
     val isFormValid = stepGoal.isNotBlank() &&
+                     distanceGoal.isNotBlank() &&
                      calorieGoal.isNotBlank() &&
                      activeTimeGoal.isNotBlank()
     
@@ -106,6 +109,17 @@ fun GoalsEditScreen(
                     recommendation = "Önerilen: 8,000-12,000"
                 )
                 
+                // Distance Goal
+                GoalEditCard(
+                    title = "Günlük Mesafe Hedefi",
+                    description = "Günde kaç kilometre yürümeyi hedefliyorsunuz?",
+                    emoji = "📍",
+                    value = distanceGoal,
+                    onValueChange = { if (it.matches(Regex("^\\d{0,2}(\\.\\d{0,1})?\$"))) distanceGoal = it },
+                    suffix = "km",
+                    recommendation = "Önerilen: 5-10"
+                )
+                
                 // Calorie Goal
                 GoalEditCard(
                     title = "Günlük Kalori Hedefi",
@@ -137,6 +151,7 @@ fun GoalsEditScreen(
                     if (isFormValid) {
                         viewModel.updateGoals(
                             stepGoal = stepGoal.toInt(),
+                            distanceGoal = distanceGoal.toDouble(),
                             calorieGoal = calorieGoal.toInt(),
                             activeTimeGoal = activeTimeGoal.toLong()
                         )

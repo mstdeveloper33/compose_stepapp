@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 private val CardBg = Color(0xFF181818)
 private val StepColor = Color(0xFFB6E94B)
@@ -42,11 +44,13 @@ private val ActiveColor = Color(0xFFA259FF)
 
 @Composable
 fun StatsScreen(
+    initialSelectedTab: Int = 0,
+    onNavigateBack: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableStateOf(initialSelectedTab) }
     var selectedDate by remember { mutableStateOf(Calendar.getInstance().time) }
     var graphData by remember { mutableStateOf<List<Pair<String, Int>>>(emptyList()) }
 
@@ -90,6 +94,19 @@ fun StatsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Geri Butonu
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Geri",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                
                 Text(
                     text = tabs[selectedTab].first,
                     fontSize = 24.sp,
@@ -601,4 +618,3 @@ private fun TrendGraphCard(
 }
 
 
- 

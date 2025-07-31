@@ -27,11 +27,13 @@ class ManageUserProfileUseCase @Inject constructor(
     
     suspend fun updateGoals(
         stepGoal: Int? = null,
+        distanceGoal: Double? = null,
         calorieGoal: Int? = null,
         activeTimeGoal: Long? = null
     ): Result<Unit> {
         return try {
             stepGoal?.let { userRepository.updateStepGoal(it) }
+            distanceGoal?.let { userRepository.updateDistanceGoal(it) }
             calorieGoal?.let { userRepository.updateCalorieGoal(it) }
             activeTimeGoal?.let { userRepository.updateActiveTimeGoal(it) }
             Result.success(Unit)

@@ -65,13 +65,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateGoals(stepGoal: Int, calorieGoal: Int, activeTimeGoal: Long) {
+    fun updateGoals(stepGoal: Int, distanceGoal: Double, calorieGoal: Int, activeTimeGoal: Long) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             
             try {
                 val result = manageUserProfileUseCase.updateGoals(
                     stepGoal = stepGoal,
+                    distanceGoal = distanceGoal,
                     calorieGoal = calorieGoal,
                     activeTimeGoal = activeTimeGoal
                 )

@@ -62,7 +62,7 @@ fun OnboardingNavigation(
         
         composable(OnboardingRoute.Goals.route) {
             GoalsScreen(
-                onComplete = { stepGoal, calorieGoal, activeTimeGoal ->
+                onComplete = { stepGoal, calorieGoal, distanceGoal, activeTimeGoal ->
                     userData?.let { data ->
                         viewModel.saveUserProfile(
                             name = data.name,
@@ -72,6 +72,7 @@ fun OnboardingNavigation(
                             gender = data.gender,
                             stepGoal = stepGoal,
                             calorieGoal = calorieGoal,
+                            distanceGoal = distanceGoal,
                             activeTimeGoal = activeTimeGoal
                         )
                     }
@@ -99,4 +100,4 @@ data class UserData(
     val height: Double,
     val weight: Double,
     val gender: Gender
-) 
+)
