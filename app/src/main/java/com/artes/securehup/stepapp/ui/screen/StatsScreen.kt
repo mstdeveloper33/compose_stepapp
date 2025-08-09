@@ -35,6 +35,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import com.artes.securehup.stepapp.domain.model.HealthData
+import kotlin.math.max
 
 private val CardBg = Color(0xFF181818)
 private val StepColor = Color(0xFFB6E94B)
@@ -53,11 +55,20 @@ fun StatsScreen(
     var selectedTab by remember { mutableStateOf(initialSelectedTab) }
     var selectedDate by remember { mutableStateOf(Calendar.getInstance().time) }
     var graphData by remember { mutableStateOf<List<Pair<String, Int>>>(emptyList()) }
+    var selectedDateHealthData by remember { mutableStateOf<HealthData?>(null) }
+    
 
-    // Grafik verilerini yükle
-    LaunchedEffect(selectedTab) {
-        graphData = viewModel.getLast7DaysData(selectedTab)
+    // Grafik verilerini yükle - hem tab hem de tarih değiştiğinde
+    LaunchedEffect(selectedTab, selectedDate) {
+        graphData = viewModel.getDataForSelectedDateRange(selectedTab, selectedDate)
     }
+
+    // Seçilen tarihin verilerini yükle
+    LaunchedEffect(selectedDate) {
+        selectedDateHealthData = viewModel.getHealthDataForDate(selectedDate)
+    }
+
+    
 
     val tabs = listOf(
         Triple("Adımlar", R.drawable.step, StepColor),
@@ -76,18 +87,19 @@ fun StatsScreen(
     val displayData = if (isToday) {
         uiState.todayHealthData
     } else {
-        // Burada seçilen tarihin verilerini almak için viewModel'e bir fonksiyon eklenebilir
-        // Şimdilik bugünün verilerini kullanıyoruz
-        uiState.todayHealthData
+        selectedDateHealthData
     }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(CardBg),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(CardBg),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
         // Header
         item {
             Row(
@@ -114,6 +126,8 @@ fun StatsScreen(
                     color = Color.White,
                     modifier = Modifier.weight(1f)
                 )
+
+                
 
                 // Tab Dropdown
                 var expanded by remember { mutableStateOf(false) }
@@ -226,10 +240,13 @@ fun StatsScreen(
             )
         }
 
-        // Alt kısımda biraz boşluk bırak (bottom navigation için)
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
+            // Alt kısımda biraz boşluk bırak (bottom navigation için)
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
         }
+
+        
     }
 }
 
@@ -460,11 +477,14 @@ private fun TrendGraphCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val step = maxValue / 3
+                // Dinamik Y ekseni etiketleri
+                val dataMaxValue = data.maxOfOrNull { it.second } ?: 1
+                val displayMaxValue = if (dataMaxValue == 0) maxValue else max(dataMaxValue, maxValue / 4)
+                val step = displayMaxValue / 3
 
                 (0..3).forEach { i ->
                     Text(
-                        text = (maxValue - (i * step)).toString(),
+                        text = (displayMaxValue - (i * step)).toString(),
                         fontSize = 10.sp,
                         color = Color.White.copy(alpha = 0.6f)
                     )
@@ -496,30 +516,66 @@ private fun TrendGraphCard(
 
                 // Area chart
                 if (data.isNotEmpty()) {
+                    // Dinamik max value hesapla (verilerden en büyük değeri al)
+                    val dataMaxValue = data.maxOfOrNull { it.second } ?: 1
+                    val actualMaxValue = if (dataMaxValue == 0) maxValue else max(dataMaxValue, maxValue / 4)
+                    
                     val points = data.mapIndexed { index, (_, value) ->
                         val x = (index.toFloat() / (data.size - 1)) * 100
-                        val y = 100 - (value.toFloat() / maxValue * 100)
+                        val y = 100 - (value.toFloat() / actualMaxValue * 100).coerceIn(0f, 100f)
                         Offset(x, y)
                     }
 
                     // Draw area chart
-                    if (points.size > 1) {
+                    if (points.size >= 1) {
                     Canvas(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         val path = Path()
-                        path.moveTo(points.first().x * size.width / 100, size.height)
-                        path.lineTo(
-                            points.first().x * size.width / 100,
-                            points.first().y * size.height / 100
-                        )
-
-                        points.drop(1).forEach { point ->
-                            path.lineTo(point.x * size.width / 100, point.y * size.height / 100)
+                        val scaledPointsForArea = points.map { point ->
+                            Offset(
+                                point.x * size.width / 100,
+                                point.y * size.height / 100
+                            )
                         }
-
-                        path.lineTo(points.last().x * size.width / 100, size.height)
-                        path.close()
+                        
+                        if (scaledPointsForArea.isNotEmpty()) {
+                            // Alt kenardan başla
+                            path.moveTo(scaledPointsForArea.first().x, size.height)
+                            path.lineTo(scaledPointsForArea.first().x, scaledPointsForArea.first().y)
+                            
+                            when {
+                                scaledPointsForArea.size == 1 -> {
+                                    // Tek nokta varsa küçük alan
+                                    path.lineTo(scaledPointsForArea.first().x + 1f, scaledPointsForArea.first().y)
+                                }
+                                scaledPointsForArea.size == 2 -> {
+                                    // İki nokta varsa düz çizgi
+                                    path.lineTo(scaledPointsForArea.last().x, scaledPointsForArea.last().y)
+                                }
+                                else -> {
+                                    // Smooth curve area fill - basit quadratic
+                                    for (i in 1 until scaledPointsForArea.size) {
+                                        val startPoint = scaledPointsForArea[i - 1]
+                                        val endPoint = scaledPointsForArea[i]
+                                        
+                                        if (i == 1) {
+                                            val midX = (startPoint.x + endPoint.x) / 2f
+                                            val midY = startPoint.y
+                                            path.quadraticBezierTo(midX, midY, endPoint.x, endPoint.y)
+                                        } else {
+                                            val controlX = (startPoint.x + endPoint.x) / 2f
+                                            val controlY = (startPoint.y + endPoint.y) / 2f
+                                            path.quadraticBezierTo(controlX, controlY, endPoint.x, endPoint.y)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Alt kenara geri dön
+                            path.lineTo(scaledPointsForArea.last().x, size.height)
+                            path.close()
+                        }
 
                         // Draw gradient fill
                         drawPath(
@@ -532,15 +588,47 @@ private fun TrendGraphCard(
                             )
                         )
 
-                        // Draw line
+                        // Draw smooth curved line using cubic bezier
                         val linePath = Path()
-                        linePath.moveTo(
-                            points.first().x * size.width / 100,
-                            points.first().y * size.height / 100
-                        )
-
-                        points.drop(1).forEach { point ->
-                            linePath.lineTo(point.x * size.width / 100, point.y * size.height / 100)
+                        val scaledPoints = points.map { point ->
+                            Offset(
+                                point.x * size.width / 100,
+                                point.y * size.height / 100
+                            )
+                        }
+                        
+                        if (scaledPoints.isNotEmpty()) {
+                            linePath.moveTo(scaledPoints.first().x, scaledPoints.first().y)
+                            
+                            when {
+                                scaledPoints.size == 1 -> {
+                                    // Tek nokta varsa küçük bir çizgi çiz
+                                    linePath.lineTo(scaledPoints.first().x + 1f, scaledPoints.first().y)
+                                }
+                                scaledPoints.size == 2 -> {
+                                    // İki nokta varsa düz çizgi çiz
+                                    linePath.lineTo(scaledPoints.last().x, scaledPoints.last().y)
+                                }
+                                else -> {
+                                    // Smooth curve için basit quadratic bezier kullan
+                                    for (i in 1 until scaledPoints.size) {
+                                        val startPoint = scaledPoints[i - 1]
+                                        val endPoint = scaledPoints[i]
+                                        
+                                        if (i == 1) {
+                                            // İlk segment için basit quadratic
+                                            val midX = (startPoint.x + endPoint.x) / 2f
+                                            val midY = startPoint.y
+                                            linePath.quadraticBezierTo(midX, midY, endPoint.x, endPoint.y)
+                                        } else {
+                                            // Diğer segmentler için de basit quadratic
+                                            val controlX = (startPoint.x + endPoint.x) / 2f
+                                            val controlY = (startPoint.y + endPoint.y) / 2f
+                                            linePath.quadraticBezierTo(controlX, controlY, endPoint.x, endPoint.y)
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         drawPath(

@@ -21,11 +21,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalConfiguration
+import kotlin.math.max
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,18 +52,24 @@ fun HomeScreen(
     val profile = uiState.userProfile
     val todayData = uiState.todayHealthData
 
+    val configuration = LocalConfiguration.current
+    val verticalGap = remember(configuration) { (max(12f, configuration.screenHeightDp * 0.02f)).dp }
+    val horizontalPadding = remember(configuration) { (max(12f, configuration.screenWidthDp * 0.04f)).dp }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(CardBg)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .padding(horizontalPadding),
+        verticalArrangement = Arrangement.spacedBy(verticalGap)
     ) {
         Text(
-            text = "Bugün ne yapıyorsun?",
+            text = "Hadi Başlayalım!",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
         StatCard(
@@ -75,6 +84,7 @@ fun HomeScreen(
             cardColor = StepColor,
             onAction = { onNavigateToStats(0) }
         )
+        Spacer(modifier = Modifier.height(verticalGap / 2))
         StatCard(
             icon = R.drawable.fire,
             iconBg = CalorieColor,
@@ -87,6 +97,7 @@ fun HomeScreen(
             cardColor = CalorieColor,
             onAction = { onNavigateToStats(1) }
         )
+        Spacer(modifier = Modifier.height(verticalGap / 2))
         StatCard(
             icon = R.drawable.km,
             iconBg = DistanceColor,
@@ -98,6 +109,7 @@ fun HomeScreen(
             cardColor = DistanceColor,
             onAction = { onNavigateToStats(2) }
         )
+        Spacer(modifier = Modifier.height(verticalGap / 2))
         StatCard(
             icon = R.drawable.clock,
             iconBg = ActiveColor,
@@ -157,6 +169,10 @@ private fun StatCard(
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                val (ctaEmoji, ctaText) = remember(title, percent, value, goal, unit) {
+                    buildMotivationMessage(title, percent, value, goal, unit)
+                }
+
                 Box(
                     modifier = Modifier
                         .background(Color.Black.copy(alpha = 0.08f), RoundedCornerShape(20.dp))
@@ -166,13 +182,13 @@ private fun StatCard(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "⚡",
+                            text = ctaEmoji,
                             fontSize = 16.sp,
                             modifier = Modifier.padding(end = 4.dp)
                         )
                         Text(
-                            text = "Harekete geç!",
-                            fontSize = 15.sp,
+                            text = ctaText,
+                            fontSize = 14.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Medium
                         )
@@ -209,5 +225,46 @@ private fun StatCard(
                 trackColor = Color.Black.copy(alpha = 0.08f)
             )
         }
+    }
+}
+
+private fun buildMotivationMessage(
+    title: String,
+    percent: Float,
+    value: Int,
+    goal: Int,
+    unit: String
+): Pair<String, String> {
+    val p = (percent * 100).coerceIn(0f, 100f)
+    return when (title) {
+        "Adımlar" -> when {
+            p < 10f -> "🚶" to "Başla!"
+            p < 40f -> "💪" to "Devam!"
+            p < 70f -> "⚡" to "Yaklaştın!"
+            p < 100f -> "🏁" to "Son tur!"
+            else -> "🎉" to "Harika!"
+        }
+        "Kaloriler" -> when {
+            p < 10f -> "🔥" to "Isın!"
+            p < 40f -> "🥵" to "Tempo!"
+            p < 70f -> "⚡" to "Devam!"
+            p < 100f -> "🏁" to "Bitir!"
+            else -> "🎯" to "Süper!"
+        }
+        "Mesafe" -> when {
+            p < 10f -> "🗺️" to "Kısa tur!"
+            p < 40f -> "🚶‍♂️" to "Devam!"
+            p < 70f -> "🏃" to "Yaklaştın!"
+            p < 100f -> "🏁" to "Bitir!"
+            else -> "🌟" to "Tamam!"
+        }
+        "Aktif Süre" -> when {
+            p < 10f -> "⏱️" to "5 dk!"
+            p < 40f -> "💪" to "Biraz daha!"
+            p < 70f -> "⚡" to "Ritim!"
+            p < 100f -> "🏁" to "Son dk!"
+            else -> "🎉" to "Tamam!"
+        }
+        else -> "⚡" to "Harekete geç!"
     }
 }

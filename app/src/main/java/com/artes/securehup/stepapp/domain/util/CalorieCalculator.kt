@@ -71,18 +71,44 @@ class CalorieCalculator @Inject constructor() {
     fun calculateDistanceFromSteps(steps: Int, userProfile: UserProfile): Double {
         if (steps <= 0) return 0.0
         
-        val stepLength = when (userProfile.gender) {
+        val adjustedStepLength = getAdjustedStepLength(userProfile, null)
+        val distanceMeters = steps * adjustedStepLength
+        return distanceMeters / 1000.0 // Kilometre'ye çevir
+    }
+
+    /**
+     * Aktivite tipine göre dinamik adım boyu ile mesafe hesaplama
+     */
+    fun calculateDistanceFromSteps(
+        steps: Int,
+        userProfile: UserProfile,
+        activityType: ActivityType?
+    ): Double {
+        if (steps <= 0) return 0.0
+        val adjustedStepLength = getAdjustedStepLength(userProfile, activityType)
+        val distanceMeters = steps * adjustedStepLength
+        return distanceMeters / 1000.0
+    }
+
+    /**
+     * Kullanıcının boyu/cinsiyeti ve aktivite tipine bağlı adım boyu (metre)
+     */
+    fun getAdjustedStepLength(userProfile: UserProfile, activityType: ActivityType?): Double {
+        val baseStepLength = when (userProfile.gender) {
             Gender.MALE -> AVERAGE_STEP_LENGTH_MALE
             Gender.FEMALE -> AVERAGE_STEP_LENGTH_FEMALE
             Gender.OTHER -> (AVERAGE_STEP_LENGTH_MALE + AVERAGE_STEP_LENGTH_FEMALE) / 2
         }
-        
-        // Boy faktörü ekleyelim (standart 170cm'e göre ayarlama)
         val heightFactor = userProfile.height / 170.0
-        val adjustedStepLength = stepLength * heightFactor
-        
-        val distanceMeters = steps * adjustedStepLength
-        return distanceMeters / 1000.0 // Kilometre'ye çevir
+        val speedFactor = when (activityType) {
+            ActivityType.WALKING_SLOW -> 0.95
+            ActivityType.WALKING_NORMAL, null -> 1.0
+            ActivityType.WALKING_FAST -> 1.08
+            ActivityType.RUNNING_SLOW -> 1.20
+            ActivityType.RUNNING_NORMAL -> 1.30
+            ActivityType.RUNNING_FAST -> 1.40
+        }
+        return baseStepLength * heightFactor * speedFactor
     }
     
     /**
@@ -132,10 +158,8 @@ class CalorieCalculator @Inject constructor() {
         val bmr = userProfile.getBasalMetabolicRate()
         val activityMultiplier = activityLevel.multiplier
         
-        val totalDailyEnergyExpenditure = bmr * activityMultiplier
-        
-        // Egzersizden gelen ek kalori hedefi (BMR'nin %15-25'i)
-        val exerciseCalorieGoal = (bmr * 0.20).roundToInt()
+        // Egzersiz kalori hedefini TDEE'nin %10'u kadar belirleyelim (daha gerçekçi hedef)
+        val exerciseCalorieGoal = ((bmr * activityMultiplier) * 0.10).roundToInt()
         
         return exerciseCalorieGoal
     }

@@ -141,7 +141,8 @@ class StepTrackingService : Service(), SensorEventListener {
                     resetDailyData()
                     
                     // Database'e yeni günün verisi olarak sıfır kaydet
-                    updateStepCount()
+                    // Yeni gün: delta'lar 0 geçilir
+                    updateStepCount(0, 0L)
                     
                 } catch (e: Exception) {
                     Log.e(TAG, "Error in midnight reset timer", e)
@@ -365,6 +366,8 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    private var lastUpdateTimeMs: Long = 0L
+
     private fun handleStepCounter(totalSteps: Long) {
         // Önce tarih değişimi kontrolü yap
         checkDateChange()
@@ -378,11 +381,18 @@ class StepTrackingService : Service(), SensorEventListener {
             Log.d(TAG, "Initialized with step count: $initialStepCount")
         }
         
+        val now = System.currentTimeMillis()
+        if (lastUpdateTimeMs == 0L) lastUpdateTimeMs = now
+
         currentStepCount = totalSteps
-        dailyStepCount = (currentStepCount - initialStepCount).toInt()
+        val newDaily = (currentStepCount - initialStepCount).toInt()
+        val deltaSteps = (newDaily - dailyStepCount).coerceAtLeast(0)
+        val deltaMillis = now - lastUpdateTimeMs
+        dailyStepCount = newDaily
+        lastUpdateTimeMs = now
         
         if (dailyStepCount >= 0) {
-            updateStepCount()
+            updateStepCount(deltaSteps, deltaMillis)
             updateNotification()
             saveDailyData()
         }
@@ -420,11 +430,13 @@ class StepTrackingService : Service(), SensorEventListener {
                 checkDateChange()
                 
                 stepCountFromAccelerometer++
-                lastStepTime = currentTime
+                val deltaSteps = 1
+                val deltaMillis = if (lastUpdateTimeMs == 0L) 0L else (currentTime - lastUpdateTimeMs)
+                lastUpdateTimeMs = currentTime
                 
                 // Sadece accelerometer kullanıldığında güncellensin
                 dailyStepCount = stepCountFromAccelerometer
-                updateStepCount()
+                updateStepCount(deltaSteps, deltaMillis)
                 updateNotification()
                 saveDailyData()
                 
@@ -433,9 +445,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
-    private fun updateStepCount() {
+    private fun updateStepCount(deltaSteps: Int, deltaMillis: Long) {
         serviceScope.launch {
-            val result = updateStepsUseCase(dailyStepCount)
+            val result = updateStepsUseCase(dailyStepCount, deltaSteps, deltaMillis)
             if (result.isSuccess) {
                 Log.d(TAG, "Updated daily steps: $dailyStepCount")
             } else {

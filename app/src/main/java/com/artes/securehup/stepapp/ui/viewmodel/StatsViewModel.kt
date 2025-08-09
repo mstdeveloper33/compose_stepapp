@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import android.util.Log
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
@@ -28,6 +29,16 @@ class StatsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(StatsUiState())
     val uiState: StateFlow<StatsUiState> = _uiState.asStateFlow()
+
+    private fun normalizeToDayStart(date: Date): Date {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.time
+    }
 
     init {
         loadStats()
@@ -193,6 +204,14 @@ class StatsViewModel @Inject constructor(
         loadStats()
     }
 
+    suspend fun refreshGraphData(type: Int, selectedDate: Date): List<Pair<String, Int>> {
+        return getDataForSelectedDateRange(type, selectedDate)
+    }
+
+    suspend fun refreshSelectedDateData(selectedDate: Date): HealthData? {
+        return getHealthDataForDate(selectedDate)
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
@@ -204,8 +223,10 @@ class StatsViewModel @Inject constructor(
             
             // Son 7 günün verilerini al
             for (i in 6 downTo 0) {
+                val base = normalizeToDayStart(calendar.time)
+                calendar.time = base
                 calendar.add(Calendar.DAY_OF_YEAR, -i)
-                val date = calendar.time
+                val date = normalizeToDayStart(calendar.time)
                 val dateString = SimpleDateFormat("d", Locale.getDefault()).format(date)
                 
                 // Bu tarihteki veriyi al
@@ -230,14 +251,15 @@ class StatsViewModel @Inject constructor(
     suspend fun getDataForSelectedDateRange(type: Int, selectedDate: Date): List<Pair<String, Int>> {
         return try {
             val calendar = Calendar.getInstance()
-            calendar.time = selectedDate
-            
-            // Seçilen tarihten geriye doğru 14 gün al
             val data = mutableListOf<Pair<String, Int>>()
             
-            for (i in 13 downTo 0) {
+            Log.d("StatsViewModel", "Getting data for type: $type, selectedDate: $selectedDate")
+            
+            // Seçilen tarihten geriye doğru 6 gün al (toplamda 7 gün)
+            for (i in 6 downTo 0) {
+                calendar.time = normalizeToDayStart(selectedDate)
                 calendar.add(Calendar.DAY_OF_YEAR, -i)
-                val date = calendar.time
+                val date = normalizeToDayStart(calendar.time)
                 val dateString = SimpleDateFormat("d", Locale.getDefault()).format(date)
                 
                 // Bu tarihteki veriyi al
@@ -249,19 +271,21 @@ class StatsViewModel @Inject constructor(
                     else -> (healthData?.activeTime?.toInt() ?: 0)
                 }
                 
+                Log.d("StatsViewModel", "Date: $dateString, Value: $value, HealthData: $healthData")
                 data.add(dateString to value)
-                calendar.add(Calendar.DAY_OF_YEAR, i) // Takvimi geri al
             }
             
+            Log.d("StatsViewModel", "Final data: $data")
             data
         } catch (e: Exception) {
+            Log.e("StatsViewModel", "Error getting data: ${e.message}")
             emptyList()
         }
     }
 
     suspend fun getHealthDataForDate(date: Date): HealthData? {
         return try {
-            healthRepository.getHealthDataByDateSync(date)
+            healthRepository.getHealthDataByDateSync(normalizeToDayStart(date))
         } catch (e: Exception) {
             null
         }
