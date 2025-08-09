@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.ui.viewmodel.StatsViewModel
 import com.artes.stepapp.R
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.clickable
@@ -77,10 +76,10 @@ fun StatsScreen(
         Triple("Aktif Süre", R.drawable.clock, ActiveColor)
     )
 
-    // Seçilen tarihe göre verileri al
-    val selectedDateString =
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate)
-    val todayString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    // Seçilen tarihe göre verileri al (formatter'ları remember ile cache'le)
+    val ymdFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
+    val selectedDateString = ymdFormatter.format(selectedDate)
+    val todayString = ymdFormatter.format(Date())
 
     // Seçilen tarih bugünse bugünün verilerini, değilse seçilen tarihin verilerini kullan
     val isToday = selectedDateString == todayString
@@ -562,11 +561,11 @@ private fun TrendGraphCard(
                                         if (i == 1) {
                                             val midX = (startPoint.x + endPoint.x) / 2f
                                             val midY = startPoint.y
-                                            path.quadraticBezierTo(midX, midY, endPoint.x, endPoint.y)
+                                            path.quadraticTo(midX, midY, endPoint.x, endPoint.y)
                                         } else {
                                             val controlX = (startPoint.x + endPoint.x) / 2f
                                             val controlY = (startPoint.y + endPoint.y) / 2f
-                                            path.quadraticBezierTo(controlX, controlY, endPoint.x, endPoint.y)
+                                            path.quadraticTo(controlX, controlY, endPoint.x, endPoint.y)
                                         }
                                     }
                                 }
@@ -619,12 +618,12 @@ private fun TrendGraphCard(
                                             // İlk segment için basit quadratic
                                             val midX = (startPoint.x + endPoint.x) / 2f
                                             val midY = startPoint.y
-                                            linePath.quadraticBezierTo(midX, midY, endPoint.x, endPoint.y)
+                                            linePath.quadraticTo(midX, midY, endPoint.x, endPoint.y)
                                         } else {
                                             // Diğer segmentler için de basit quadratic
                                             val controlX = (startPoint.x + endPoint.x) / 2f
                                             val controlY = (startPoint.y + endPoint.y) / 2f
-                                            linePath.quadraticBezierTo(controlX, controlY, endPoint.x, endPoint.y)
+                                            linePath.quadraticTo(controlX, controlY, endPoint.x, endPoint.y)
                                         }
                                     }
                                 }

@@ -169,7 +169,7 @@ private fun StatCard(
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                val (ctaEmoji, ctaText) = remember(title, percent, value, goal, unit) {
+                val (ctaEmoji, ctaText) = remember(title, percent) {
                     buildMotivationMessage(title, percent, value, goal, unit)
                 }
 
@@ -228,12 +228,13 @@ private fun StatCard(
     }
 }
 
+@Suppress("UnusedParameter")
 private fun buildMotivationMessage(
     title: String,
     percent: Float,
-    value: Int,
-    goal: Int,
-    unit: String
+    @Suppress("UNUSED_PARAMETER") value: Int,
+    @Suppress("UNUSED_PARAMETER") goal: Int,
+    @Suppress("UNUSED_PARAMETER") unit: String
 ): Pair<String, String> {
     val p = (percent * 100).coerceIn(0f, 100f)
     return when (title) {

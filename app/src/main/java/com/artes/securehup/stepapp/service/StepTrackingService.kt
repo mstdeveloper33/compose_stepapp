@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -528,5 +529,9 @@ class StepTrackingService : Service(), SensorEventListener {
         sensorManager.unregisterListener(this)
         midnightResetJob?.cancel()
         dateCheckJob?.cancel()
+        // Tüm arka plan işleri sonlandır
+        try {
+            serviceScope.cancel()
+        } catch (_: Exception) { }
     }
 } 
