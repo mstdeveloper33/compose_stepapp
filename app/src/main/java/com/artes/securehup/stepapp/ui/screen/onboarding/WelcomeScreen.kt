@@ -3,10 +3,12 @@ package com.artes.securehup.stepapp.ui.screen.onboarding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Favorite
@@ -32,7 +34,8 @@ fun WelcomeScreen(
         modifier = modifier
             .fillMaxSize()
             .background(DarkBackground)
-            .padding(Dimensions.paddingLarge),
+            .padding(Dimensions.paddingLarge)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge + Dimensions.paddingMedium))
@@ -57,7 +60,7 @@ fun WelcomeScreen(
         // Welcome Title
         Text(
             text = "Sağlık Takibi",
-            fontSize = 36.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = TextPrimary
@@ -96,7 +99,7 @@ fun WelcomeScreen(
             )
         }
         
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
         
         // Progress indicator
         LinearProgressIndicator(
@@ -126,7 +129,7 @@ fun WelcomeScreen(
             ) {
                 Text(
                     text = "Başlayalım",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = DarkBackground
                 )
@@ -139,7 +142,7 @@ fun WelcomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
                         tint = DarkBackground,
                         modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)

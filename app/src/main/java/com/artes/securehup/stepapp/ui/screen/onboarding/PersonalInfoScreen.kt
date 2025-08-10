@@ -11,7 +11,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -58,7 +58,7 @@ fun PersonalInfoScreen(
         // Header
         Text(
             text = "Kişisel Bilgileriniz",
-            fontSize = 32.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             textAlign = TextAlign.Center,
@@ -158,9 +158,9 @@ fun PersonalInfoScreen(
             }
         }
         
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
         
-        // Continue Button
+        // Continue Button - Inside scroll area
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -188,7 +188,7 @@ fun PersonalInfoScreen(
             ) {
                 Text(
                     text = "Devam Et",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = if (isFormValid) DarkBackground else TextTertiary
                 )
@@ -204,7 +204,7 @@ fun PersonalInfoScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
                         tint = if (isFormValid) DarkBackground else TextTertiary,
                         modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)

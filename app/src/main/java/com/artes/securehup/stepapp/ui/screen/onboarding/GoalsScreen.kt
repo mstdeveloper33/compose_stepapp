@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.*
@@ -87,7 +87,7 @@ fun GoalsScreen(
         // Header
         Text(
             text = "Hedeflerimi Düzenle",
-            fontSize = 32.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             textAlign = TextAlign.Center,
@@ -190,7 +190,7 @@ fun GoalsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
 
         // Continue Button
         Box(
@@ -214,7 +214,7 @@ fun GoalsScreen(
             ) {
                 Text(
                     text = "Hedefin",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = DarkBackground
                 )
@@ -227,7 +227,7 @@ fun GoalsScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
                         tint = DarkBackground,
                         modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)
@@ -319,7 +319,7 @@ private fun GoalLevelCard(
             Column {
                 Text(
                     text = title,
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = textColor
                 )
