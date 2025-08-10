@@ -2,6 +2,10 @@ package com.artes.securehup.stepapp.domain.model
 
 import java.util.Date
 
+/*
+Burada kullanılan UserProfile sınıfı, kullanıcı profilini temsil eder.
+Entity'den farkı şu : Entity'de verileri veritabanına kaydederken, Domain'de verileri kullanıcıya gösterirken kullanılır.
+*/
 data class UserProfile(
     val id: Long = 1,
     val name: String,
@@ -16,11 +20,13 @@ data class UserProfile(
     val createdAt: Date = Date(),
     val updatedAt: Date = Date()
 ) {
+    // Burada kullanılan getBMI fonksiyonu, kullanıcının vücut kitle indeksini hesaplar.
     fun getBMI(): Double {
         val heightInMeters = height / 100
         return weight / (heightInMeters * heightInMeters)
     }
     
+    // Burada kullanılan getBMICategory fonksiyonu, kullanıcının vücut kitle indeksine göre vücut kitle indeksi kategorisini hesaplar.
     fun getBMICategory(): BMICategory {
         val bmi = getBMI()
         return when {
@@ -31,6 +37,7 @@ data class UserProfile(
         }
     }
     
+    // Burada kullanılan getBasalMetabolicRate fonksiyonu, kullanıcının bazal metabolizma hızını hesaplar.
     fun getBasalMetabolicRate(): Int {
         // Harris-Benedict Equation
         return when (gender) {
@@ -42,10 +49,16 @@ data class UserProfile(
     }
 }
 
+/*
+Burada kullanılan Gender enum sınıfı, kullanıcının cinsiyetini temsil eder.
+*/
 enum class Gender {
     MALE, FEMALE, OTHER
 }
 
+/*
+Burada kullanılan BMICategory enum sınıfı, kullanıcının vücut kitle indeksi kategorisini temsil eder.
+*/
 enum class BMICategory {
     UNDERWEIGHT, NORMAL, OVERWEIGHT, OBESE
 } 

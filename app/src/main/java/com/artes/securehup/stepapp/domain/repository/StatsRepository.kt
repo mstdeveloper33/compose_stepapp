@@ -4,6 +4,11 @@ import com.artes.securehup.stepapp.domain.model.WeeklyStats
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
+/*
+Burada kullanılan StatsRepository arayüzü, haftalık istatistiklerini yönetir.
+Buranın amacı RepositoryImpl'de kullanılırken, RepositoryImpl'de kullanılan fonksiyonların imzasını belirler.
+*/
+
 interface StatsRepository {
     
     fun getAllWeeklyStats(): Flow<List<WeeklyStats>>

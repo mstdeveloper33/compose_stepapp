@@ -5,6 +5,11 @@ import com.artes.securehup.stepapp.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/*
+Burada kullanılan ManageUserProfileUseCase sınıfı, kullanıcı profilini yönetir.
+Amaç: UI'ın ihtiyacına göre sync ya da reactive veri sağlama.
+
+*/
 class ManageUserProfileUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {

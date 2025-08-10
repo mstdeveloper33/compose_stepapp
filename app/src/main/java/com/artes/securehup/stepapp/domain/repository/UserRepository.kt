@@ -2,8 +2,13 @@ package com.artes.securehup.stepapp.domain.repository
 
 import com.artes.securehup.stepapp.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
+import java.util.Date   
 
+/*
+Burada kullanılan UserRepository arayüzü, kullanıcı profilini yönetir.
+Buranın amacı RepositoryImpl'de kullanılırken, RepositoryImpl'de kullanılan fonksiyonların imzasını belirler.
+*/
+    
 interface UserRepository {
     
     fun getUserProfile(): Flow<UserProfile?>

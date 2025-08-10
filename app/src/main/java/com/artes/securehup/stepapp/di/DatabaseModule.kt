@@ -29,6 +29,13 @@ object DatabaseModule {
         .build()
     }
 
+    /*
+    Neden @Singleton yok?
+    Database zaten singleton
+    DAO'lar database'den geliyor
+    Ayrı singleton gereksiz
+    Memory efficient        
+    */
     @Provides
     fun provideHealthDataDao(database: HealthDatabase): HealthDataDao {
         return database.healthDataDao()

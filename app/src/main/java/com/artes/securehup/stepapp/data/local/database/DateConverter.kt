@@ -15,3 +15,8 @@ class DateConverter {
         return date?.time
     }
 } 
+
+/*
+Burada kullanılan DateConverter sınıfı, Room veritabanında Date tipini Long'a çevirir ve geri çevirir.
+Bu sayede, Room veritabanında Date tipini kullanabiliriz.
+*/

@@ -11,6 +11,23 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/*
+Burada kullanılan HealthRepositoryImpl sınıfı, HealthRepository arayüzünü uygular.
+HealthRepository arayüzünü uygularken, HealthDataDao ve HealthDataMapper sınıflarını kullanır.
+HealthDataDao sınıfı, adım verilerini veritabanına kaydeder, getirir ve günceller.
+UI/ViewModel 
+    ↓ (HealthData istedi)
+HealthRepository Interface 
+    ↓ (Implementation'a yönlendi)
+HealthRepositoryImpl 
+    ↓ (DAO'yu çağırdı)
+HealthDataDao 
+    ↓ (Entity döndü)
+HealthDataMapper 
+    ↓ (Domain'e çevirdi)
+HealthData → UI'a döndü 
+*/
+
 @Singleton
 class HealthRepositoryImpl @Inject constructor(
     private val healthDataDao: HealthDataDao,

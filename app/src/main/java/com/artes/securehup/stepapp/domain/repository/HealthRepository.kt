@@ -4,6 +4,12 @@ import com.artes.securehup.stepapp.domain.model.HealthData
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
+/*
+Burada kullanılan HealthRepository arayüzü, adım verilerini yönetir.
+Buranın amacı RepositoryImpl'de kullanılırken, RepositoryImpl'de kullanılan fonksiyonların imzasını belirler.
+
+*/
+
 interface HealthRepository {
     
     // Health Data Operations

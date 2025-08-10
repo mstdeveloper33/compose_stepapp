@@ -8,6 +8,16 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
+/*
+Burada kullanılan UpdateStepsUseCase sınıfı, adım verilerini günceller.
+Device'in bugünkü toplam adımını günceller.
+Kullanıcı profilini alır ve kalori hesaplar.
+Delta adım ve süre ile hesaplar.
+Delta kaloriyi hesaplar ve bugünkü toplam kaloriye ekle.
+Delta mesafe (aktivite tipine göre adım boyu) hesaplar ve bugünkü toplam mesafeye ekle.
+Delta aktif süre (dakika) hesaplar ve bugünkü toplam aktif süreye ekle.
+*/
+
 class UpdateStepsUseCase @Inject constructor(
     private val healthRepository: HealthRepository,
     private val userRepository: UserRepository,

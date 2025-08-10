@@ -11,6 +11,24 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/*
+Burada kullanılan UserRepositoryImpl sınıfı, UserRepository arayüzünü uygular.
+UserRepository arayüzünü uygularken, UserProfileDao ve UserProfileMapper sınıflarını kullanır.
+UserProfileDao sınıfı, kullanıcı profilini veritabanına kaydeder, getirir ve günceller.
+UserProfileMapper sınıfı, UserProfileEntity ve UserProfile arasında dönüşüm yapmak için kullanılır.
+
+UI/ViewModel 
+    ↓ (UserProfile istedi)
+UserRepository Interface 
+    ↓ (Implementation'a yönlendi)
+UserRepositoryImpl 
+    ↓ (DAO'yu çağırdı)
+UserProfileDao 
+    ↓ (Entity döndü)
+UserProfileMapper 
+    ↓ (Domain'e çevirdi)
+UserProfile → UI'a döndü 
+*/
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     private val userProfileDao: UserProfileDao,

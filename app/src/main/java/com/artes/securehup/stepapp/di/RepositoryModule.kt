@@ -16,6 +16,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
+    /*
+    Burada kullanılan bindHealthRepository fonksiyonu, HealthRepositoryImpl sınıfını döndürür.
+    */
     @Binds
     @Singleton
     abstract fun bindHealthRepository(

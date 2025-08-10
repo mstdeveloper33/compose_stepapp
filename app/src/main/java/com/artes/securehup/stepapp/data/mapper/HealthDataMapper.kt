@@ -7,9 +7,14 @@ import com.artes.securehup.stepapp.domain.model.WeeklyStats
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/*
+Burada kullanılan HealthDataMapper sınıfı, HealthDataEntity ve HealthData arasında dönüşüm yapmak için kullanılır.
+*/
+
 @Singleton
 class HealthDataMapper @Inject constructor() {
     
+    // Entity'yi Domain'e çevirir. Burada entity'yi domain'e çevirirken, entity'deki verileri domain'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü entity'deki verileri domain'deki verilerle eşleştirirken, entity'deki verileri domain'deki verilerle eşleştirir.
     fun entityToDomain(entity: HealthDataEntity): HealthData {
         return HealthData(
             id = entity.id,
@@ -22,6 +27,7 @@ class HealthDataMapper @Inject constructor() {
         )
     }
     
+    // Domain'i Entity'ye çevirir. Burada domain'i entity'ye çevirirken, domain'deki verileri entity'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü domain'deki verileri entity'deki verilerle eşleştirirken, domain'deki verileri entity'deki verilerle eşleştirir.
     fun domainToEntity(domain: HealthData): HealthDataEntity {
         return HealthDataEntity(
             id = domain.id,
@@ -35,11 +41,14 @@ class HealthDataMapper @Inject constructor() {
     }
 }
 
-
+/*
+Burada kullanılan WeeklyStatsMapper sınıfı, WeeklyStatsEntity ve WeeklyStats arasında dönüşüm yapmak için kullanılır.
+*/
 
 @Singleton
 class WeeklyStatsMapper @Inject constructor() {
     
+    // Entity'yi Domain'e çevirir. Burada entity'yi domain'e çevirirken, entity'deki verileri domain'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü entity'deki verileri domain'deki verilerle eşleştirirken, entity'deki verileri domain'deki verilerle eşleştirir.
     fun entityToDomain(entity: WeeklyStatsEntity): WeeklyStats {
         return WeeklyStats(
             weekId = entity.weekId,
@@ -56,6 +65,7 @@ class WeeklyStatsMapper @Inject constructor() {
         )
     }
     
+    // Domain'i Entity'ye çevirir. Burada domain'i entity'ye çevirirken, domain'deki verileri entity'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü domain'deki verileri entity'deki verilerle eşleştirirken, domain'deki verileri entity'deki verilerle eşleştirir.
     fun domainToEntity(domain: WeeklyStats): WeeklyStatsEntity {
         return WeeklyStatsEntity(
             weekId = domain.weekId,
@@ -71,4 +81,5 @@ class WeeklyStatsMapper @Inject constructor() {
             createdAt = domain.createdAt
         )
     }
-} 
+    } 
+

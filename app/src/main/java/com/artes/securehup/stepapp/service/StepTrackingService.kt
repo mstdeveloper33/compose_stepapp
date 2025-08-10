@@ -25,17 +25,32 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/*
+Burada kullanılan StepTrackingService sınıfı, adım takibi için gerekli olan servisleri yönetir.
+SensorManager, stepCounterSensor ve stepDetectorSensor ile adım sayısını takip eder.
+*/
+
 @AndroidEntryPoint
 class StepTrackingService : Service(), SensorEventListener {
 
+
+    /*
+    Burada kullanılan updateStepsUseCase, adım sayısını günceller.
+    */  
     @Inject
     lateinit var updateStepsUseCase: UpdateStepsUseCase
 
+    /*
+    Burada kullanılan sensorManager, stepCounterSensor ve stepDetectorSensor ile adım sayısını takip eder.
+    */
     private lateinit var sensorManager: SensorManager
     private var stepCounterSensor: Sensor? = null
     private var stepDetectorSensor: Sensor? = null
     
-        private var initialStepCount = 0L
+    /*
+    Burada kullanılan initialStepCount, currentStepCount, dailyStepCount, isInitialized, isUsingStepCounter, lastAcceleration, currentAcceleration, accelerationThreshold, stepCountFromAccelerometer ve lastStepTime ile adım sayısını takip eder.
+    */
+    private var initialStepCount = 0L
     private var currentStepCount = 0L
     private var dailyStepCount = 0
     private var isInitialized = false
@@ -52,7 +67,10 @@ class StepTrackingService : Service(), SensorEventListener {
     private var midnightResetJob: kotlinx.coroutines.Job? = null
     private var dateCheckJob: kotlinx.coroutines.Job? = null
     private var currentDate: String = ""
-    
+
+    /*
+    Burada kullanılan restoreDailyData, günlük verileri restore eder.
+    */
     private fun restoreDailyData() {
         val prefs = getSharedPreferences("step_tracking", Context.MODE_PRIVATE)
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
@@ -72,6 +90,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
     
+    /*
+    Burada kullanılan resetDailyData, günlük verileri sıfırlar.
+    */
     private fun resetDailyData() {
         val prefs = getSharedPreferences("step_tracking", Context.MODE_PRIVATE)
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
@@ -105,6 +126,9 @@ class StepTrackingService : Service(), SensorEventListener {
         Log.d(TAG, "Daily data reset completed for date: $today, notification updated")
     }
     
+    /*
+    Burada kullanılan saveDailyData, günlük verileri kaydeder.
+    */
     private fun saveDailyData() {
         val prefs = getSharedPreferences("step_tracking", Context.MODE_PRIVATE)
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
@@ -116,6 +140,9 @@ class StepTrackingService : Service(), SensorEventListener {
             .apply()
     }
     
+    /*
+    Burada kullanılan startMidnightResetTimer, günlük verileri sıfırlar.
+    */
     private fun startMidnightResetTimer() {
         midnightResetJob?.cancel()
         
@@ -153,6 +180,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
     
+    /*
+    Burada kullanılan checkDateChange, tarih değişimi kontrol eder.
+    */
     private fun checkDateChange() {
         val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
         if (currentDate != today) {
@@ -165,6 +195,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
     
+    /*
+    Burada kullanılan startPeriodicDateCheck, tarih değişimi kontrol eder.
+    */
     private fun startPeriodicDateCheck() {
         dateCheckJob?.cancel()
         
@@ -194,6 +227,9 @@ class StepTrackingService : Service(), SensorEventListener {
         Log.d(TAG, "Periodic date check started (every 30 seconds)")
     }
     
+    /*
+    Burada kullanılan companion object, StepTrackingService sınıfının statik metotlarını içerir.
+    */
     companion object {
         const val NOTIFICATION_ID = 1001
         const val CHANNEL_ID = "step_tracking_channel"
@@ -221,6 +257,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan onCreate, StepTrackingService sınıfının oluşturulmasını sağlar.
+    */
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "StepTrackingService created")
@@ -241,6 +280,9 @@ class StepTrackingService : Service(), SensorEventListener {
         createNotificationChannel()
     }
 
+    /*
+    Burada kullanılan onStartCommand, StepTrackingService sınıfının başlatılmasını sağlar.
+    */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand called with action: ${intent?.action}")
         
@@ -260,6 +302,9 @@ class StepTrackingService : Service(), SensorEventListener {
         return START_STICKY // Service kill edildiğinde otomatik restart
     }
     
+    /*
+    Burada kullanılan onTaskRemoved, TaskRemoved işlemi gerçekleştiğinde çalışır.
+    */
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         Log.d(TAG, "Task removed, but service should continue running")
@@ -270,6 +315,9 @@ class StepTrackingService : Service(), SensorEventListener {
         startService(restartIntent)
     }
 
+    /*
+    Burada kullanılan startStepTracking, adım takibi başlatır.
+    */
     private fun startStepTracking() {
         Log.d(TAG, "Starting step tracking")
         
@@ -325,6 +373,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
     
+    /*
+    Burada kullanılan startAccelerometerFallback, accelerometer fallback için başlatır.
+    */
     private fun startAccelerometerFallback() {
         Log.d(TAG, "Starting accelerometer fallback for step detection")
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -351,6 +402,9 @@ class StepTrackingService : Service(), SensorEventListener {
         stopSelf()
     }
 
+    /*
+    Burada kullanılan onSensorChanged, sensor değişikliği gerçekleştiğinde çalışır.
+    */
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let { sensorEvent ->
             when (sensorEvent.sensor.type) {
@@ -367,8 +421,14 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan lastUpdateTimeMs, adım sayısını günceller.
+    */
     private var lastUpdateTimeMs: Long = 0L
 
+    /*
+    Burada kullanılan handleStepCounter, step counter değişikliği gerçekleştiğinde çalışır.
+    */
     private fun handleStepCounter(totalSteps: Long) {
         // Önce tarih değişimi kontrolü yap
         checkDateChange()
@@ -399,12 +459,18 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan handleStepDetector, step detector değişikliği gerçekleştiğinde çalışır.
+    */
     private fun handleStepDetector() {
         // Step detector her adımda tetiklenir
         // Burada gerçek zamanlı feedback verilebilir
         Log.d(TAG, "Step detected")
     }
     
+    /*
+    Burada kullanılan handleAccelerometer, accelerometer değişikliği gerçekleştiğinde çalışır.
+    */
     private fun handleAccelerometer(values: FloatArray) {
         // Eğer step counter çalışıyorsa accelerometer'ı kullanma
         if (isUsingStepCounter) {
@@ -446,6 +512,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan updateStepCount, adım sayısını günceller.
+    */
     private fun updateStepCount(deltaSteps: Int, deltaMillis: Long) {
         serviceScope.launch {
             val result = updateStepsUseCase(dailyStepCount, deltaSteps, deltaMillis)
@@ -457,6 +526,9 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan updateNotification, notification'ı günceller.
+    */
     private fun updateNotification() {
         val notification = createNotification()
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -468,6 +540,9 @@ class StepTrackingService : Service(), SensorEventListener {
         Log.d(TAG, "Notification updated with steps: $dailyStepCount")
     }
 
+    /*
+    Burada kullanılan createNotification, notification'ı oluşturur.
+    */
     private fun createNotification(): Notification {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -496,6 +571,9 @@ class StepTrackingService : Service(), SensorEventListener {
             .build()
     }
 
+    /*
+    Burada kullanılan createNotificationChannel, notification channel'ı oluşturur.
+    */
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -517,12 +595,21 @@ class StepTrackingService : Service(), SensorEventListener {
         }
     }
 
+    /*
+    Burada kullanılan onAccuracyChanged, sensor doğruluğu değiştiğinde çalışır.
+    */
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         Log.d(TAG, "Sensor accuracy changed: ${sensor?.name}, accuracy: $accuracy")
     }
 
+    /*
+    Burada kullanılan onBind, service bağlandığında çalışır.
+    */
     override fun onBind(intent: Intent?): IBinder? = null
 
+    /*
+    Burada kullanılan onDestroy, service yok edildiğinde çalışır.
+    */
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "StepTrackingService destroyed")

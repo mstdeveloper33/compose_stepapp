@@ -6,9 +6,14 @@ import com.artes.securehup.stepapp.domain.model.UserProfile
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/*
+Burada kullanılan UserProfileMapper sınıfı, UserProfileEntity ve UserProfile arasında dönüşüm yapmak için kullanılır.
+*/
+
 @Singleton
 class UserProfileMapper @Inject constructor() {
     
+    // Entity'yi Domain'e çevirir. Burada entity'yi domain'e çevirirken, entity'deki verileri domain'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü entity'deki verileri domain'deki verilerle eşleştirirken, entity'deki verileri domain'deki verilerle eşleştirir.
     fun entityToDomain(entity: UserProfileEntity): UserProfile {
         return UserProfile(
             id = entity.id,
@@ -30,6 +35,7 @@ class UserProfileMapper @Inject constructor() {
         )
     }
     
+    // Domain'i Entity'ye çevirir. Burada domain'i entity'ye çevirirken, domain'deki verileri entity'deki verilerle eşleştirir. Neden? çevirme yapıyoruz sebebi ise eşleştirme yapıyoruz neden eşleştirme yapıyoruz? çünkü domain'deki verileri entity'deki verilerle eşleştirirken, domain'deki verileri entity'deki verilerle eşleştirir.
     fun domainToEntity(domain: UserProfile): UserProfileEntity {
         return UserProfileEntity(
             id = domain.id,

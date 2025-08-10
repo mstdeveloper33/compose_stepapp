@@ -6,6 +6,18 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.roundToInt
 
+/*
+Burada kullanılan CalorieCalculator sınıfı, kalori hesaplamalarını yapar.
+
+Kullanıcının ağırlığı, boyu, cinsiyeti ve aktivite tipine göre kalori hesaplar.
+Adım sayısından mesafe hesaplar.
+Adım sayısından aktivite süresini tahmin eder.
+Adım hızından aktivite tipini tahmin eder.
+Günlük hedef kalori önerisi hesaplar.
+Refearans olduğu sayfa ise UpdateStepsUseCase sınıfıdır.
+
+*/
+
 @Singleton
 class CalorieCalculator @Inject constructor() {
     

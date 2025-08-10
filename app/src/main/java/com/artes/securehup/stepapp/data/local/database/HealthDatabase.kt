@@ -32,3 +32,12 @@ abstract class HealthDatabase : RoomDatabase() {
         const val DATABASE_NAME = "health_database"
     }
 } 
+
+/*
+Burada kullanılan HealthDatabase sınıfı, Room veritabanını oluşturur ve veritabanına erişim sağlar.
+Veritabanına erişim sağlamak için, HealthDataDao, UserProfileDao ve WeeklyStatsDao sınıflarını kullanır.
+Veritabanının adını DATABASE_NAME sabitinde belirtilir.
+Veritabanının sürüm numarasını version sabitinde belirtilir.
+Veritabanının şemasını exportSchema sabitinde belirtilir.
+Veritabanının şemasını TypeConverters sınıfında belirtilir.
+*/

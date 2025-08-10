@@ -11,6 +11,24 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/*
+Burada kullanılan StatsRepositoryImpl sınıfı, StatsRepository arayüzünü uygular.
+StatsRepository arayüzünü uygularken, WeeklyStatsDao ve WeeklyStatsMapper sınıflarını kullanır.
+WeeklyStatsDao sınıfı, haftalık istatistiklerini veritabanına kaydeder, getirir ve günceller.
+WeeklyStatsMapper sınıfı, WeeklyStatsEntity ve WeeklyStats arasında dönüşüm yapmak için kullanılır.
+
+UI/ViewModel 
+    ↓ (WeeklyStats istedi)
+StatsRepository Interface 
+    ↓ (Implementation'a yönlendi)
+StatsRepositoryImpl 
+    ↓ (DAO'yu çağırdı)
+WeeklyStatsDao 
+    ↓ (Entity döndü)
+WeeklyStatsMapper 
+    ↓ (Domain'e çevirdi)
+WeeklyStats → UI'a döndü 
+*/
 @Singleton
 class StatsRepositoryImpl @Inject constructor(
     private val weeklyStatsDao: WeeklyStatsDao,
