@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.ui.viewmodel.HomeViewModel
-import com.artes.stepapp.R
+import com.artes.securehup.stepapp.R
 
 private val StepColor = Color(0xFFB6E94B)
 private val CalorieColor = Color(0xFFFFA940)

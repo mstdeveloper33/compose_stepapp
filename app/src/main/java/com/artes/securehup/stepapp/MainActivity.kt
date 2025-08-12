@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.service.StepTrackingService
 import com.artes.securehup.stepapp.ui.navigation.AppNavigation
 import com.artes.securehup.stepapp.ui.navigation.OnboardingNavigation
+
 import com.artes.securehup.stepapp.ui.theme.StepappTheme
 import com.artes.securehup.stepapp.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +51,10 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Tema'yı normal tema'ya geç (manifest splash'tan sonra)
+        setTheme(com.artes.securehup.stepapp.R.style.Theme_Stepapp)
+        
         enableEdgeToEdge()
         
         // İzinleri kontrol et ve step tracking'i başlat

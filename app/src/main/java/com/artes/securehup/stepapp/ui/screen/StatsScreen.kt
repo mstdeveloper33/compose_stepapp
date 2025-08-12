@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.ui.viewmodel.StatsViewModel
-import com.artes.stepapp.R
+import com.artes.securehup.stepapp.R
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.clickable

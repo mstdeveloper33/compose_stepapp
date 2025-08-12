@@ -25,7 +25,7 @@ import com.artes.securehup.stepapp.domain.model.Gender
 import com.artes.securehup.stepapp.domain.model.UserProfile
 import com.artes.securehup.stepapp.ui.theme.*
 import com.artes.securehup.stepapp.ui.viewmodel.ProfileViewModel
-import com.artes.stepapp.R
+import com.artes.securehup.stepapp.R
 
 private val CardBg = Color(0xFF181818)
 private val StepColor = Color(0xFFB6E94B)

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Theme.Stepapp" parent="android:Theme.Material.Light.NoActionBar" />
+    
+    <!-- Instant Splash - sadece beyaz ekran yerine logo göster -->
+    <style name="Theme.Stepapp.Splash" parent="Theme.Stepapp">
+        <item name="android:windowBackground">@drawable/instant_splash</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
 </resources>

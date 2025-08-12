@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.artes.stepapp"
+    namespace = "com.artes.securehup.stepapp"
     compileSdk = 35
 
     defaultConfig {
@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Splash Screen API
+    implementation(libs.androidx.core.splashscreen)
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")

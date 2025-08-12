@@ -38,7 +38,7 @@
             android:name="com.artes.securehup.stepapp.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Stepapp">
+            android:theme="@style/Theme.Stepapp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
