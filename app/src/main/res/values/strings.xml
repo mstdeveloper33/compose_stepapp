@@ -1,3 +1,140 @@
 <resources>
     <string name="app_name">stepapp</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_profile">Profil</string>
+    <string name="nav_stats">İstatistikler</string>
+    
+    <!-- Home Screen -->
+    <string name="today_stats">Bugünkü İstatistikler</string>
+    <string name="steps">Adım</string>
+    <string name="calories">Kalori</string>
+    <string name="distance">Mesafe</string>
+    <string name="active_time">Aktif Süre</string>
+    <string name="km_unit">km</string>
+    <string name="kcal_unit">kcal</string>
+    <string name="min_unit">dk</string>
+    <string name="step_unit">adım</string>
+    
+    <!-- Profile Screen -->
+    <string name="personal_info">Kişisel Bilgilerim</string>
+    <string name="daily_goals">Günlük Hedeflerim</string>
+    <string name="name">İsim</string>
+    <string name="age">Yaş</string>
+    <string name="height">Boy</string>
+    <string name="weight">Kilo</string>
+    <string name="gender">Cinsiyet</string>
+    <string name="gender_male">Erkek</string>
+    <string name="gender_female">Kadın</string>
+    <string name="gender_other">Diğer</string>
+    <string name="age_suffix">yaş</string>
+    <string name="cm_unit">cm</string>
+    <string name="kg_unit">kg</string>
+    <string name="edit_personal_info">Kişisel Bilgilerimi Düzenle</string>
+    <string name="edit_goals">Hedeflerimi Düzenle</string>
+    <string name="step_goal">Adım Hedefi</string>
+    <string name="distance_goal">Mesafe Hedefi</string>
+    <string name="calorie_goal">Kalori Hedefi</string>
+    <string name="active_time_goal">Aktif Süre Hedefi</string>
+    
+    <!-- Settings -->
+    <string name="language_options">Dil Seçenekleri</string>
+    <string name="rate_us">Bizi Değerlendirin</string>
+    <string name="feedback">Geri Bildirim</string>
+    <string name="share_with_friends">Arkadaşınla Paylaş</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language">Dil Seçin</string>
+    <string name="turkish">Türkçe</string>
+    <string name="english">English</string>
+    <string name="cancel">İptal</string>
+    <string name="confirm">Onayla</string>
+    
+    <!-- Onboarding -->
+    <string name="welcome">Hoş Geldiniz</string>
+    <string name="get_started">Başlayalım</string>
+    <string name="next">İleri</string>
+    <string name="back">Geri</string>
+    <string name="finish">Bitir</string>
+    <string name="personal_information">Kişisel Bilgiler</string>
+    <string name="your_goals">Hedefleriniz</string>
+    
+    <!-- Common -->
+    <string name="loading">Yükleniyor...</string>
+    <string name="error">Hata</string>
+    <string name="profile_load_error">Profil bilgileri yüklenemedi</string>
+    <string name="save">Kaydet</string>
+    <string name="edit">Düzenle</string>
+    <string name="lets_get_started">Hadi Başlayalım!</string>
+    
+    <!-- Motivation Messages -->
+    <string name="motivation_start">Başla!</string>
+    <string name="motivation_continue">Devam!</string>
+    <string name="motivation_close">Yaklaştın!</string>
+    <string name="motivation_final">Son tur!</string>
+    <string name="motivation_great">Harika!</string>
+    <string name="motivation_warm_up">Isın!</string>
+    <string name="motivation_tempo">Tempo!</string>
+    <string name="motivation_finish">Bitir!</string>
+    <string name="motivation_super">Süper!</string>
+    <string name="motivation_short_walk">Kısa tur!</string>
+    <string name="motivation_keep_going">Biraz daha!</string>
+    <string name="motivation_rhythm">Ritim!</string>
+    <string name="motivation_final_min">Son dk!</string>
+    <string name="motivation_done">Tamam!</string>
+    <string name="motivation_5min">5 dk!</string>
+    <string name="motivation_get_moving">Harekete geç!</string>
+    
+    <!-- Additional Motivation Messages -->
+    <string name="motivation_warm_up_steps">Isın!</string>
+    <string name="motivation_tempo_calories">Tempo!</string>
+    <string name="motivation_short_walk_distance">Kısa tur!</string>
+    <string name="motivation_good_work">Tamam!</string>
+    <string name="motivation_final_minutes">Son dk!</string>
+    <string name="motivation_finish_goal">Bitir!</string>
+    <string name="motivation_awesome">Süper!</string>
+    
+    <!-- Stats Screen -->
+    <string name="statistics">İstatistikler</string>
+    <string name="no_data_message">Bu tarih için veri bulunamadı</string>
+    <string name="motivational_steps">Adımlarını artırarak kendi rekorunu kır!</string>
+    <string name="motivational_calories">Yakılan her kalori seni hedefe yaklaştırıyor!</string>
+    <string name="motivational_distance">Her kilometre seni daha güçlü yapıyor!</string>
+    <string name="motivational_active_time">Aktif kalmak sağlığın anahtarı!</string>
+    
+    <!-- Edit Screens -->
+    <string name="edit_profile">Profil Düzenle</string>
+    <string name="edit_goals_title">Hedeflerimi Düzenle</string>
+    <string name="personal_information_title">Kişisel Bilgiler</string>
+    <string name="goal_suggestion">Hedef Önerisi</string>
+    <string name="goal_description">Hedeflerinizi kodenmi olarak artırın. Ani değişiklikler yerine sürdürülebilir hedefler koyun.</string>
+    <string name="daily_step_goal">Günlük Adım Hedefi</string>
+    <string name="how_many_steps_daily">Günde kaç adım atmayı hedefliyorsunuz?</string>
+    <string name="daily_distance_goal">Günlük Mesafe Hedefi</string>
+    <string name="how_many_km_daily">Günde kaç kilometre yürümeyi hedefliyorsunuz?</string>
+    <string name="daily_calorie_goal">Günlük Kalori Hedefi</string>
+    <string name="how_many_calories_daily">Günde kaç kalori yakmayı hedefliyorsunuz?</string>
+    <string name="daily_active_time_goal">Günlük Aktif Süre Hedefi</string>
+    <string name="how_many_minutes_daily">Günde kaç dakika aktif olmayı hedefliyorsunuz?</string>
+    <string name="steps_suffix">adım</string>
+    <string name="calories_suffix">kalori</string>
+    <string name="minutes_suffix">dakika</string>
+    <string name="recommended_steps">Önerilen: 8,000-12,000</string>
+    <string name="recommended_distance">Önerilen: 5-10</string>
+    <string name="recommended_calories">Önerilen: 1,800-2,500</string>
+    <string name="recommended_active_time">Önerilen: 30-90</string>
+    <string name="save_goals">Hedefleri Kaydet</string>
+    <string name="goal_progress">Hedefinizin %1$s\'i</string>
+    <string name="trend">Trendi</string>
+    <string name="no_data_yet">Henüz veri yok</string>
+    
+    <!-- Day abbreviations -->
+    <string name="day_mon">Pt</string>
+    <string name="day_tue">Sa</string>
+    <string name="day_wed">Ça</string>
+    <string name="day_thu">Pe</string>
+    <string name="day_fri">Cu</string>
+    <string name="day_sat">Ct</string>
+    <string name="day_sun">Pz</string>
 </resources>

@@ -19,7 +19,8 @@ import com.artes.securehup.stepapp.ui.screen.GoalsEditScreen // Hedef düzenleme
 @OptIn(ExperimentalMaterial3Api::class) // Deneysel Material 3 API'sini kullan
 @Composable // Bu fonksiyon UI componenti olduğunu belirtir
 fun AppNavigation( // Ana uygulama navigation fonksiyonu
-    navController: NavHostController = rememberNavController() // Navigation controller (varsayılan: yeni oluştur)
+    navController: NavHostController = rememberNavController(), // Navigation controller (varsayılan: yeni oluştur)
+    onLanguageChanged: () -> Unit = {} // Dil değişimi callback'i
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState() // Şu anki navigation state'ini reactive olarak al
     val currentRoute = navBackStackEntry?.destination?.route // Şu anki route adresini al (örn: "home", "stats/0")
@@ -139,7 +140,8 @@ fun AppNavigation( // Ana uygulama navigation fonksiyonu
                     },
                     onNavigateToGoalsEdit = { // "Hedefleri Düzenle" butonuna tıklandığında
                         navController.navigate("goals_edit") // Hedef düzenleme sayfasına git
-                    }
+                    },
+                    onLanguageChanged = onLanguageChanged // Dil değişimi callback'ini geçir
                 )
             }
             

@@ -1,0 +1,140 @@
+<resources>
+    <string name="app_name">stepapp</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_stats">Statistics</string>
+    
+    <!-- Home Screen -->
+    <string name="today_stats">Today\'s Statistics</string>
+    <string name="steps">Steps</string>
+    <string name="calories">Calories</string>
+    <string name="distance">Distance</string>
+    <string name="active_time">Active Time</string>
+    <string name="km_unit">km</string>
+    <string name="kcal_unit">kcal</string>
+    <string name="min_unit">min</string>
+    <string name="step_unit">steps</string>
+    
+    <!-- Profile Screen -->
+    <string name="personal_info">Personal Information</string>
+    <string name="daily_goals">Daily Goals</string>
+    <string name="name">Name</string>
+    <string name="age">Age</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="gender">Gender</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_other">Other</string>
+    <string name="age_suffix">years old</string>
+    <string name="cm_unit">cm</string>
+    <string name="kg_unit">kg</string>
+    <string name="edit_personal_info">Edit Personal Information</string>
+    <string name="edit_goals">Edit Goals</string>
+    <string name="step_goal">Step Goal</string>
+    <string name="distance_goal">Distance Goal</string>
+    <string name="calorie_goal">Calorie Goal</string>
+    <string name="active_time_goal">Active Time Goal</string>
+    
+    <!-- Settings -->
+    <string name="language_options">Language Options</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="feedback">Feedback</string>
+    <string name="share_with_friends">Share with Friends</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language">Select Language</string>
+    <string name="turkish">Türkçe</string>
+    <string name="english">English</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    
+    <!-- Onboarding -->
+    <string name="welcome">Welcome</string>
+    <string name="get_started">Get Started</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="finish">Finish</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="your_goals">Your Goals</string>
+    
+    <!-- Common -->
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="profile_load_error">Profile information could not be loaded</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="lets_get_started">Let\'s Get Started!</string>
+    
+    <!-- Motivation Messages -->
+    <string name="motivation_start">Start!</string>
+    <string name="motivation_continue">Continue!</string>
+    <string name="motivation_close">Almost there!</string>
+    <string name="motivation_final">Final lap!</string>
+    <string name="motivation_great">Great!</string>
+    <string name="motivation_warm_up">Warm up!</string>
+    <string name="motivation_tempo">Keep tempo!</string>
+    <string name="motivation_finish">Finish!</string>
+    <string name="motivation_super">Super!</string>
+    <string name="motivation_short_walk">Short walk!</string>
+    <string name="motivation_keep_going">Keep going!</string>
+    <string name="motivation_rhythm">Keep rhythm!</string>
+    <string name="motivation_final_min">Final min!</string>
+    <string name="motivation_done">Done!</string>
+    <string name="motivation_5min">5 min!</string>
+    <string name="motivation_get_moving">Get moving!</string>
+    
+    <!-- Additional Motivation Messages -->
+    <string name="motivation_warm_up_steps">Warm up!</string>
+    <string name="motivation_tempo_calories">Keep tempo!</string>
+    <string name="motivation_short_walk_distance">Short walk!</string>
+    <string name="motivation_good_work">Good!</string>
+    <string name="motivation_final_minutes">Final min!</string>
+    <string name="motivation_finish_goal">Finish!</string>
+    <string name="motivation_awesome">Awesome!</string>
+    
+    <!-- Stats Screen -->
+    <string name="statistics">Statistics</string>
+    <string name="no_data_message">No data found for this date</string>
+    <string name="motivational_steps">Break your own record by increasing your steps!</string>
+    <string name="motivational_calories">Every calorie burned brings you closer to your goal!</string>
+    <string name="motivational_distance">Every kilometer makes you stronger!</string>
+    <string name="motivational_active_time">Staying active is the key to your health!</string>
+    
+    <!-- Edit Screens -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_goals_title">Edit Goals</string>
+    <string name="personal_information_title">Personal Information</string>
+    <string name="goal_suggestion">Goal Suggestion</string>
+    <string name="goal_description">Increase your goals gradually. Set sustainable goals instead of sudden changes.</string>
+    <string name="daily_step_goal">Daily Step Goal</string>
+    <string name="how_many_steps_daily">How many steps do you aim to take per day?</string>
+    <string name="daily_distance_goal">Daily Distance Goal</string>
+    <string name="how_many_km_daily">How many kilometers do you aim to walk per day?</string>
+    <string name="daily_calorie_goal">Daily Calorie Goal</string>
+    <string name="how_many_calories_daily">How many calories do you aim to burn per day?</string>
+    <string name="daily_active_time_goal">Daily Active Time Goal</string>
+    <string name="how_many_minutes_daily">How many minutes do you aim to be active per day?</string>
+    <string name="steps_suffix">steps</string>
+    <string name="calories_suffix">calories</string>
+    <string name="minutes_suffix">minutes</string>
+    <string name="recommended_steps">Recommended: 8,000-12,000</string>
+    <string name="recommended_distance">Recommended: 5-10</string>
+    <string name="recommended_calories">Recommended: 1,800-2,500</string>
+    <string name="recommended_active_time">Recommended: 30-90</string>
+    <string name="save_goals">Save Goals</string>
+    <string name="goal_progress">%1$s of your goal</string>
+    <string name="trend">Trend</string>
+    <string name="no_data_yet">No data yet</string>
+    
+    <!-- Day abbreviations -->
+    <string name="day_mon">Mo</string>
+    <string name="day_tue">Tu</string>
+    <string name="day_wed">We</string>
+    <string name="day_thu">Th</string>
+    <string name="day_fri">Fr</string>
+    <string name="day_sat">Sa</string>
+    <string name="day_sun">Su</string>
+</resources>

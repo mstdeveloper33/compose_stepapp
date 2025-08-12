@@ -1,6 +1,7 @@
 package com.artes.securehup.stepapp
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -15,8 +16,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.artes.securehup.stepapp.domain.util.LanguageManager
 import com.artes.securehup.stepapp.service.StepTrackingService
 import com.artes.securehup.stepapp.ui.navigation.AppNavigation
 import com.artes.securehup.stepapp.ui.navigation.OnboardingNavigation
@@ -24,9 +27,13 @@ import com.artes.securehup.stepapp.ui.navigation.OnboardingNavigation
 import com.artes.securehup.stepapp.ui.theme.StepappTheme
 import com.artes.securehup.stepapp.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    
+    @Inject
+    lateinit var languageManager: LanguageManager
     
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -65,6 +72,36 @@ class MainActivity : ComponentActivity() {
                 MainContent()
             }
         }
+    }
+    
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase?.let { context ->
+            // Inject yapmadan önce dil ayarını uygula
+            val savedLanguage = context.getSharedPreferences("step_app_prefs", Context.MODE_PRIVATE)
+                .getString("selected_language", LanguageManager.DEFAULT_LANGUAGE) ?: LanguageManager.DEFAULT_LANGUAGE
+            
+            applyLanguageToContext(context, savedLanguage)
+        })
+    }
+    
+    private fun applyLanguageToContext(context: Context, language: String): Context {
+        val locale = java.util.Locale(language)
+        java.util.Locale.setDefault(locale)
+        
+        val config = android.content.res.Configuration(context.resources.configuration)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(locale)
+            context.createConfigurationContext(config)
+        } else {
+            @Suppress("DEPRECATION")
+            config.locale = locale
+            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+            context
+        }
+    }
+    
+    fun restartActivity() {
+        recreate()
     }
     
     private fun checkPermissionsAndStartTracking() {
@@ -116,6 +153,7 @@ private fun MainContent(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     
     when {
         !uiState.isInitialized || uiState.isLoading -> {
@@ -139,7 +177,12 @@ private fun MainContent(
         
         else -> {
             // Show main app
-            AppNavigation()
+            AppNavigation(
+                onLanguageChanged = {
+                    // Activity'yi yeniden başlat dil değişikliğini uygulamak için
+                    (context as? MainActivity)?.restartActivity()
+                }
+            )
         }
     }
     

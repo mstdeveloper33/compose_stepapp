@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,11 +32,13 @@ import com.artes.securehup.stepapp.ui.viewmodel.StatsViewModel
 import com.artes.securehup.stepapp.R
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Locale
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import com.artes.securehup.stepapp.domain.model.HealthData
+import java.util.Calendar
 import kotlin.math.max
 
 private val CardBg = Color(0xFF181818)
@@ -50,11 +54,23 @@ fun StatsScreen(
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(initialSelectedTab) }
     var selectedDate by remember { mutableStateOf(Calendar.getInstance().time) }
     var graphData by remember { mutableStateOf<List<Pair<String, Int>>>(emptyList()) }
     var selectedDateHealthData by remember { mutableStateOf<HealthData?>(null) }
+    
+    // Current locale'i al (dil ayarına göre)
+    val currentLocale = remember {
+        val resources = context.resources
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            resources.configuration.locales[0]
+        } else {
+            @Suppress("DEPRECATION")
+            resources.configuration.locale
+        }
+    }
     
 
     // Grafik verilerini yükle - hem tab hem de tarih değiştiğinde
@@ -70,10 +86,10 @@ fun StatsScreen(
     
 
     val tabs = listOf(
-        Triple("Adımlar", R.drawable.step, StepColor),
-        Triple("Kaloriler", R.drawable.fire, CalorieColor),
-        Triple("Mesafe", R.drawable.km, DistanceColor),
-        Triple("Aktif Süre", R.drawable.clock, ActiveColor)
+        Triple(stringResource(R.string.steps), R.drawable.step, StepColor),
+        Triple(stringResource(R.string.calories), R.drawable.fire, CalorieColor),
+        Triple(stringResource(R.string.distance), R.drawable.km, DistanceColor),
+        Triple(stringResource(R.string.active_time), R.drawable.clock, ActiveColor)
     )
 
     // Seçilen tarihe göre verileri al (formatter'ları remember ile cache'le)
@@ -192,7 +208,8 @@ fun StatsScreen(
             DateSelector(
                 selectedDate = selectedDate,
                 onDateSelected = { selectedDate = it },
-                activeColor = tabs[selectedTab].third
+                activeColor = tabs[selectedTab].third,
+                currentLocale = currentLocale
             )
         }
 
@@ -215,19 +232,20 @@ fun StatsScreen(
                     else -> uiState.userProfile?.dailyActiveTimeGoal?.toInt() ?: 60
                 },
                 unit = when (selectedTab) {
-                    0 -> "adım"
-                    1 -> "kcal"
-                    2 -> "km"
-                    else -> "dk"
+                    0 -> stringResource(R.string.step_unit)
+                    1 -> stringResource(R.string.kcal_unit)
+                    2 -> stringResource(R.string.km_unit)
+                    else -> stringResource(R.string.min_unit)
                 },
-                selectedDate = selectedDate
+                selectedDate = selectedDate,
+                currentLocale = currentLocale
             )
         }
 
         // Trend Graph
         item {
             TrendGraphCard(
-                title = "${tabs[selectedTab].first} Trendi",
+                title = "${tabs[selectedTab].first} ${stringResource(R.string.trend)}",
                 color = tabs[selectedTab].third,
                 data = graphData,
                 maxValue = when (selectedTab) {
@@ -253,10 +271,11 @@ fun StatsScreen(
 private fun DateSelector(
     selectedDate: Date,
     onDateSelected: (Date) -> Unit,
-    activeColor: Color
+    activeColor: Color,
+    currentLocale: Locale
 ) {
-    val dateFormat = SimpleDateFormat("E", Locale("tr", "TR"))
-    val dayFormat = SimpleDateFormat("d", Locale("tr", "TR"))
+    val dateFormat = SimpleDateFormat("E", currentLocale)
+    val dayFormat = SimpleDateFormat("d", currentLocale)
 
     // Son günden itibaren geriye dönük 14 gün oluştur
     val dates = (0..13).map { dayOffset ->
@@ -377,7 +396,8 @@ private fun DailySummaryCard(
     value: Int,
     goal: Int,
     unit: String,
-    selectedDate: Date
+    selectedDate: Date,
+    currentLocale: Locale
 ) {
     val percentage = (value.toFloat() / goal.toFloat()).coerceIn(0f, 1f)
     val percentageText = "${(percentage * 100).toInt()}%"
@@ -393,7 +413,7 @@ private fun DailySummaryCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = SimpleDateFormat("d MMMM yyyy", Locale("tr", "TR")).format(selectedDate),
+                text = SimpleDateFormat("d MMMM yyyy", currentLocale).format(selectedDate),
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -423,7 +443,7 @@ private fun DailySummaryCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Hedefinizin $percentageText'i",
+                text = stringResource(R.string.goal_progress, percentageText),
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.8f)
             )
@@ -432,10 +452,10 @@ private fun DailySummaryCard(
 
             Text(
                 text = when (title) {
-                    "Adımlar" -> "Adımlarını artırarak kendi rekorunu kır!"
-                    "Kaloriler" -> "Yakılan her kalori seni hedefe yaklaştırıyor!"
-                    "Mesafe" -> "Her kilometre seni daha güçlü yapıyor!"
-                    else -> "Aktif kalmak sağlığın anahtarı!"
+                    stringResource(R.string.steps) -> stringResource(R.string.motivational_steps)
+                    stringResource(R.string.calories) -> stringResource(R.string.motivational_calories)
+                    stringResource(R.string.distance) -> stringResource(R.string.motivational_distance)
+                    else -> stringResource(R.string.motivational_active_time)
                 },
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.6f),
@@ -453,6 +473,23 @@ private fun TrendGraphCard(
     data: List<Pair<String, Int>>,
     maxValue: Int
 ) {
+    val context = LocalContext.current
+    
+    // Bugünün tarihine göre gün kısaltmalarını oluştur
+    fun getDayAbbreviation(dayOffset: Int): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, dayOffset - 6) // 6 gün geriye git, sonra offset kadar ilerle
+        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
+            Calendar.MONDAY -> context.getString(R.string.day_mon)
+            Calendar.TUESDAY -> context.getString(R.string.day_tue)
+            Calendar.WEDNESDAY -> context.getString(R.string.day_wed)
+            Calendar.THURSDAY -> context.getString(R.string.day_thu)
+            Calendar.FRIDAY -> context.getString(R.string.day_fri)
+            Calendar.SATURDAY -> context.getString(R.string.day_sat)
+            Calendar.SUNDAY -> context.getString(R.string.day_sun)
+            else -> ""
+        }
+    }
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -660,7 +697,7 @@ private fun TrendGraphCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Henüz veri yok",
+                            text = stringResource(R.string.no_data_yet),
                             fontSize = 14.sp,
                             color = Color.White.copy(alpha = 0.6f),
                             textAlign = TextAlign.Center
@@ -675,7 +712,7 @@ private fun TrendGraphCard(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        data.forEach { (label, value) ->
+                        data.forEachIndexed { index, (label, value) ->
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.weight(1f)
@@ -690,7 +727,7 @@ private fun TrendGraphCard(
                                 Spacer(modifier = Modifier.height(4.dp))
 
                                 Text(
-                                    text = label,
+                                    text = getDayAbbreviation(index),
                                     fontSize = 10.sp,
                                     color = Color.White.copy(alpha = 0.7f),
                                     textAlign = TextAlign.Center

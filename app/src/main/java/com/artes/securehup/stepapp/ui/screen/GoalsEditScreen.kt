@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.artes.securehup.stepapp.ui.viewmodel.ProfileViewModel
+import com.artes.securehup.stepapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,10 +53,10 @@ fun GoalsEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hedeflerimi Düzenle") },
+                title = { Text(stringResource(R.string.edit_goals_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -78,13 +80,13 @@ fun GoalsEditScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "💡 Hedef Önerisi",
+                        text = "💡 ${stringResource(R.string.goal_suggestion)}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = "Hedeflerinizi kademeli olarak artırın. Ani değişiklikler yerine sürdürülebilir hedefler koyun.",
+                        text = stringResource(R.string.goal_description),
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(top = 4.dp)
@@ -100,46 +102,46 @@ fun GoalsEditScreen(
             ) {
                 // Step Goal
                 GoalEditCard(
-                    title = "Günlük Adım Hedefi",
-                    description = "Günde kaç adım atmayı hedefliyorsunuz?",
+                    title = stringResource(R.string.daily_step_goal),
+                    description = stringResource(R.string.how_many_steps_daily),
                     emoji = "👟",
                     value = stepGoal,
                     onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 6) stepGoal = it },
-                    suffix = "adım",
-                    recommendation = "Önerilen: 8,000-12,000"
+                    suffix = stringResource(R.string.steps_suffix),
+                    recommendation = stringResource(R.string.recommended_steps)
                 )
                 
                 // Distance Goal
                 GoalEditCard(
-                    title = "Günlük Mesafe Hedefi",
-                    description = "Günde kaç kilometre yürümeyi hedefliyorsunuz?",
+                    title = stringResource(R.string.daily_distance_goal),
+                    description = stringResource(R.string.how_many_km_daily),
                     emoji = "📍",
                     value = distanceGoal,
                     onValueChange = { if (it.matches(Regex("^\\d{0,2}(\\.\\d{0,1})?\$"))) distanceGoal = it },
-                    suffix = "km",
-                    recommendation = "Önerilen: 5-10"
+                    suffix = stringResource(R.string.km_unit),
+                    recommendation = stringResource(R.string.recommended_distance)
                 )
                 
                 // Calorie Goal
                 GoalEditCard(
-                    title = "Günlük Kalori Hedefi",
-                    description = "Günde kaç kalori yakmayı hedefliyorsunuz?",
+                    title = stringResource(R.string.daily_calorie_goal),
+                    description = stringResource(R.string.how_many_calories_daily),
                     emoji = "🔥",
                     value = calorieGoal,
                     onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 5) calorieGoal = it },
-                    suffix = "kalori",
-                    recommendation = "Önerilen: 1,800-2,500"
+                    suffix = stringResource(R.string.calories_suffix),
+                    recommendation = stringResource(R.string.recommended_calories)
                 )
                 
                 // Active Time Goal
                 GoalEditCard(
-                    title = "Günlük Aktif Süre Hedefi",
-                    description = "Günde kaç dakika aktif olmayı hedefliyorsunuz?",
+                    title = stringResource(R.string.daily_active_time_goal),
+                    description = stringResource(R.string.how_many_minutes_daily),
                     emoji = "⏱️",
                     value = activeTimeGoal,
                     onValueChange = { if (it.all { char -> char.isDigit() } && it.length <= 3) activeTimeGoal = it },
-                    suffix = "dakika",
-                    recommendation = "Önerilen: 30-90"
+                    suffix = stringResource(R.string.minutes_suffix),
+                    recommendation = stringResource(R.string.recommended_active_time)
                 )
             }
             
@@ -166,7 +168,7 @@ fun GoalsEditScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Hedefleri Kaydet")
+                    Text(stringResource(R.string.save_goals))
                 }
             }
             

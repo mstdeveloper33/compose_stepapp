@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.artes.securehup.stepapp.domain.model.UserProfile
 import com.artes.securehup.stepapp.domain.usecase.ManageUserProfileUseCase
+import com.artes.securehup.stepapp.domain.util.LanguageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val manageUserProfileUseCase: ManageUserProfileUseCase
+    private val manageUserProfileUseCase: ManageUserProfileUseCase,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -118,11 +120,40 @@ class ProfileViewModel @Inject constructor(
     fun checkProfileExists(): Boolean {
         return _uiState.value.userProfile != null
     }
+    
+    // Dil yönetimi fonksiyonları
+    fun getCurrentLanguage(): String {
+        return languageManager.getCurrentLanguage()
+    }
+    
+    fun getAvailableLanguages() = languageManager.getAvailableLanguages()
+    
+    fun changeLanguage(languageCode: String) {
+        viewModelScope.launch {
+            try {
+                languageManager.setLanguage(languageCode)
+                _uiState.value = _uiState.value.copy(
+                    languageChanged = true,
+                    selectedLanguage = languageCode
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Dil değiştirme işlemi başarısız oldu: ${e.message}"
+                )
+            }
+        }
+    }
+    
+    fun resetLanguageChangeFlag() {
+        _uiState.value = _uiState.value.copy(languageChanged = false)
+    }
 }
 
 data class ProfileUiState(
     val isLoading: Boolean = false,
     val userProfile: UserProfile? = null,
     val error: String? = null,
-    val successMessage: String? = null
+    val successMessage: String? = null,
+    val languageChanged: Boolean = false,
+    val selectedLanguage: String = LanguageManager.DEFAULT_LANGUAGE
 ) 

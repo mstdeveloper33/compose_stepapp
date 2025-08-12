@@ -1,18 +1,10 @@
 package com.artes.securehup.stepapp.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -26,15 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalConfiguration
-import kotlin.math.max
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.artes.securehup.stepapp.ui.viewmodel.HomeViewModel
 import com.artes.securehup.stepapp.R
+import com.artes.securehup.stepapp.ui.viewmodel.HomeViewModel
 
 private val StepColor = Color(0xFFB6E94B)
 private val CalorieColor = Color(0xFFFFA940)
@@ -53,95 +47,212 @@ fun HomeScreen(
     val todayData = uiState.todayHealthData
 
     val configuration = LocalConfiguration.current
-    val verticalGap = remember(configuration) { (max(12f, configuration.screenHeightDp * 0.02f)).dp }
-    val horizontalPadding = remember(configuration) { (max(12f, configuration.screenWidthDp * 0.04f)).dp }
+    val dimensions = remember(configuration) {
+        ResponsiveDimensions.calculate(configuration)
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(CardBg)
-            .padding(horizontalPadding),
-        verticalArrangement = Arrangement.spacedBy(verticalGap)
+            .padding(
+                start = dimensions.horizontalPadding,
+                end = dimensions.horizontalPadding,
+                top = dimensions.topPadding,
+                bottom = dimensions.bottomPadding
+            )
     ) {
+        // Header
         Text(
-            text = "Hadi Başlayalım!",
-            fontSize = 24.sp,
+            text = stringResource(R.string.lets_get_started),
+            fontSize = dimensions.headerFontSize,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = dimensions.headerBottomMargin),
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
-        StatCard(
-            icon = R.drawable.step,
-            iconBg = StepColor,
-            title = "Adımlar",
-            value = (todayData?.steps ?: 0),
-            goal = (profile?.dailyStepGoal ?: 15000),
-            unit = "",
-            percent = (todayData?.steps?.toFloat() ?: 0f) / (profile?.dailyStepGoal?.toFloat()
-                ?: 15000f),
-            cardColor = StepColor,
-            onAction = { onNavigateToStats(0) }
-        )
-        Spacer(modifier = Modifier.height(verticalGap / 2))
-        StatCard(
-            icon = R.drawable.fire,
-            iconBg = CalorieColor,
-            title = "Kaloriler",
-            value = (todayData?.calories ?: 0),
-            goal = (profile?.dailyCalorieGoal ?: 300),
-            unit = "",
-            percent = (todayData?.calories?.toFloat() ?: 0f) / (profile?.dailyCalorieGoal?.toFloat()
-                ?: 300f),
-            cardColor = CalorieColor,
-            onAction = { onNavigateToStats(1) }
-        )
-        Spacer(modifier = Modifier.height(verticalGap / 2))
-        StatCard(
-            icon = R.drawable.km,
-            iconBg = DistanceColor,
-            title = "Mesafe",
-            value = (todayData?.distance?.toInt() ?: 0),
-            goal = (profile?.dailyDistanceGoal?.toInt() ?: 7),
-            unit = "",
-            percent = (todayData?.distance?.toFloat() ?: 0f) / (profile?.dailyDistanceGoal?.toFloat() ?: 7f),
-            cardColor = DistanceColor,
-            onAction = { onNavigateToStats(2) }
-        )
-        Spacer(modifier = Modifier.height(verticalGap / 2))
-        StatCard(
-            icon = R.drawable.clock,
-            iconBg = ActiveColor,
-            title = "Aktif Süre",
-            value = (todayData?.activeTime ?: 0).toInt(),
-            goal = (profile?.dailyActiveTimeGoal?.toInt() ?: 45),
-            unit = "dk",
-            percent = (todayData?.activeTime?.toFloat()
-                ?: 0f) / (profile?.dailyActiveTimeGoal?.toFloat() ?: 45f),
-            cardColor = ActiveColor,
-            onAction = { onNavigateToStats(3) }
-        )
+        // Stat Cards - Ekrana tam sığacak şekilde
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            val statCards = listOf(
+                StatCardData(
+                    icon = R.drawable.step,
+                    iconBg = StepColor,
+                    title = stringResource(R.string.steps),
+                    value = (todayData?.steps ?: 0),
+                    goal = (profile?.dailyStepGoal ?: 15000),
+                    unit = "",
+                    percent = (todayData?.steps?.toFloat() ?: 0f) / (profile?.dailyStepGoal?.toFloat() ?: 15000f),
+                    cardColor = StepColor,
+                    onAction = { onNavigateToStats(0) }
+                ),
+                StatCardData(
+                    icon = R.drawable.fire,
+                    iconBg = CalorieColor,
+                    title = stringResource(R.string.calories),
+                    value = (todayData?.calories ?: 0),
+                    goal = (profile?.dailyCalorieGoal ?: 300),
+                    unit = "",
+                    percent = (todayData?.calories?.toFloat() ?: 0f) / (profile?.dailyCalorieGoal?.toFloat() ?: 300f),
+                    cardColor = CalorieColor,
+                    onAction = { onNavigateToStats(1) }
+                ),
+                StatCardData(
+                    icon = R.drawable.km,
+                    iconBg = DistanceColor,
+                    title = stringResource(R.string.distance),
+                    value = (todayData?.distance?.toInt() ?: 0),
+                    goal = (profile?.dailyDistanceGoal?.toInt() ?: 7),
+                    unit = "",
+                    percent = (todayData?.distance?.toFloat() ?: 0f) / (profile?.dailyDistanceGoal?.toFloat() ?: 7f),
+                    cardColor = DistanceColor,
+                    onAction = { onNavigateToStats(2) }
+                ),
+                StatCardData(
+                    icon = R.drawable.clock,
+                    iconBg = ActiveColor,
+                    title = stringResource(R.string.active_time),
+                    value = (todayData?.activeTime ?: 0).toInt(),
+                    goal = (profile?.dailyActiveTimeGoal?.toInt() ?: 45),
+                    unit = stringResource(R.string.min_unit),
+                    percent = (todayData?.activeTime?.toFloat() ?: 0f) / (profile?.dailyActiveTimeGoal?.toFloat() ?: 45f),
+                    cardColor = ActiveColor,
+                    onAction = { onNavigateToStats(3) }
+                )
+            )
+
+            statCards.forEach { cardData ->
+                StatCard(
+                    data = cardData,
+                    dimensions = dimensions
+                )
+            }
+        }
+    }
+}
+
+data class StatCardData(
+    val icon: Int,
+    val iconBg: Color,
+    val title: String,
+    val value: Int,
+    val goal: Int,
+    val unit: String,
+    val percent: Float,
+    val cardColor: Color,
+    val onAction: () -> Unit
+)
+
+data class ResponsiveDimensions(
+    val horizontalPadding: Dp,
+    val topPadding: Dp,
+    val bottomPadding: Dp,
+    val cardSpacing: Dp,
+    val cardHeight: Dp,
+    val cardPadding: Dp,
+    val cornerRadius: Dp,
+    val iconSize: Dp,
+    val iconInnerSize: Dp,
+    val headerFontSize: androidx.compose.ui.unit.TextUnit,
+    val titleFontSize: androidx.compose.ui.unit.TextUnit,
+    val headerBottomMargin: Dp
+) {
+    companion object {
+        fun calculate(configuration: Configuration): ResponsiveDimensions {
+            val screenWidth = configuration.screenWidthDp
+            val screenHeight = configuration.screenHeightDp
+            
+            // Dinamik hesaplamalar - ekrana tam sığacak şekilde
+            val availableHeight = screenHeight - 160 // Status bar, header, bottom bar, padding için rezerv
+            val cardHeight = (availableHeight / 4.5f).coerceIn(100f, 160f)
+            val cardSpacing = (availableHeight * 0.03f).coerceIn(8f, 20f)
+            val topPadding = (screenHeight * 0.02f).coerceIn(16f, 24f)
+            val bottomPadding = (screenHeight * 0.02f).coerceIn(20f, 20f)
+            
+            val isSmallDevice = screenHeight < 600 || screenWidth < 360
+            val isTablet = screenWidth > 600 && screenHeight > 800
+            val isLargePhone = screenHeight > 800 && !isTablet
+
+            return when {
+                isSmallDevice -> ResponsiveDimensions(
+                    horizontalPadding = 16.dp,
+                    topPadding = topPadding.dp,
+                    bottomPadding = bottomPadding.dp,
+                    cardSpacing = cardSpacing.dp,
+                    cardHeight = cardHeight.dp,
+                    cardPadding = 18.dp,
+                    cornerRadius = 22.dp,
+                    iconSize = 40.dp,
+                    iconInnerSize = 22.dp,
+                    headerFontSize = 20.sp,
+                    titleFontSize = 16.sp,
+                    headerBottomMargin = 16.dp
+                )
+                isTablet -> ResponsiveDimensions(
+                    horizontalPadding = (screenWidth * 0.08f).dp,
+                    topPadding = (topPadding * 1.5f).dp,
+                    bottomPadding = bottomPadding.dp,
+                    cardSpacing = (cardSpacing * 1.3f).dp,
+                    cardHeight = (cardHeight * 1.2f).dp,
+                    cardPadding = 28.dp,
+                    cornerRadius = 28.dp,
+                    iconSize = 56.dp,
+                    iconInnerSize = 32.dp,
+                    headerFontSize = 28.sp,
+                    titleFontSize = 22.sp,
+                    headerBottomMargin = 32.dp
+                )
+                isLargePhone -> ResponsiveDimensions(
+                    horizontalPadding = 20.dp,
+                    topPadding = (topPadding * 1.2f).dp,
+                    bottomPadding = bottomPadding.dp,
+                    cardSpacing = (cardSpacing * 1.1f).dp,
+                    cardHeight = (cardHeight * 1.1f).dp,
+                    cardPadding = 24.dp,
+                    cornerRadius = 26.dp,
+                    iconSize = 50.dp,
+                    iconInnerSize = 28.dp,
+                    headerFontSize = 25.sp,
+                    titleFontSize = 21.sp,
+                    headerBottomMargin = 24.dp
+                )
+                else -> ResponsiveDimensions(
+                    horizontalPadding = 18.dp,
+                    topPadding = topPadding.dp,
+                    bottomPadding = bottomPadding.dp,
+                    cardSpacing = cardSpacing.dp,
+                    cardHeight = cardHeight.dp,
+                    cardPadding = 20.dp,
+                    cornerRadius = 24.dp,
+                    iconSize = 46.dp,
+                    iconInnerSize = 24.dp,
+                    headerFontSize = 23.sp,
+                    titleFontSize = 19.sp,
+                    headerBottomMargin = 20.dp
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun StatCard(
-    icon: Int,
-    iconBg: Color,
-    title: String,
-    value: Int,
-    goal: Int,
-    unit: String,
-    percent: Float,
-    cardColor: Color,
-    onAction: () -> Unit
+    data: StatCardData,
+    dimensions: ResponsiveDimensions
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(cardColor, RoundedCornerShape(28.dp))
-            .padding(20.dp)
+            .height(dimensions.cardHeight)
+            .background(data.cardColor, RoundedCornerShape(dimensions.cornerRadius))
+            .padding(dimensions.cardPadding)
     ) {
         Column {
             Row(
@@ -150,33 +261,35 @@ private fun StatCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .background(iconBg.copy(alpha = 0.25f), CircleShape),
+                        .size(dimensions.iconSize)
+                        .background(data.iconBg.copy(alpha = 0.25f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = icon),
+                        painter = painterResource(id = data.icon),
                         contentDescription = null,
                         tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(dimensions.iconInnerSize)
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                val (ctaEmoji, ctaText) = remember(title, percent) {
-                    buildMotivationMessage(title, percent, value, goal, unit)
-                }
 
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = data.title,
+                    fontSize = dimensions.titleFontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                val (ctaEmoji, ctaText) = getMotivationMessage(data.title, data.percent)
                 Box(
                     modifier = Modifier
                         .background(Color.Black.copy(alpha = 0.08f), RoundedCornerShape(20.dp))
-                        .clickable { onAction() }
+                        .clickable { data.onAction() }
                         .padding(horizontal = 12.dp, vertical = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -190,33 +303,38 @@ private fun StatCard(
                             text = ctaText,
                             fontSize = 14.sp,
                             color = Color.Black,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1
                         )
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (unit.isNotEmpty()) "$value/$goal $unit" else "$value/$goal",
+                    text = if (data.unit.isNotEmpty()) "${data.value}/${data.goal} ${data.unit}" else "${data.value}/${data.goal}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "${((percent * 100).coerceIn(0f, 100f)).toInt()}%",
+                    text = "${((data.percent * 100).coerceIn(0f, 100f)).toInt()}%",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
             }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             LinearProgressIndicator(
-                progress = { percent.coerceIn(0f, 1f) },
+                progress = { data.percent.coerceIn(0f, 1f) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -228,44 +346,46 @@ private fun StatCard(
     }
 }
 
-@Suppress("UnusedParameter")
-private fun buildMotivationMessage(
+@Composable
+private fun getMotivationMessage(
     title: String,
-    percent: Float,
-    @Suppress("UNUSED_PARAMETER") value: Int,
-    @Suppress("UNUSED_PARAMETER") goal: Int,
-    @Suppress("UNUSED_PARAMETER") unit: String
+    percent: Float
 ): Pair<String, String> {
     val p = (percent * 100).coerceIn(0f, 100f)
+    val stepsTitle = stringResource(R.string.steps)
+    val caloriesTitle = stringResource(R.string.calories)
+    val distanceTitle = stringResource(R.string.distance)
+    val activeTimeTitle = stringResource(R.string.active_time)
+
     return when (title) {
-        "Adımlar" -> when {
-            p < 10f -> "🚶" to "Başla!"
-            p < 40f -> "💪" to "Devam!"
-            p < 70f -> "⚡" to "Yaklaştın!"
-            p < 100f -> "🏁" to "Son tur!"
-            else -> "🎉" to "Harika!"
+        stepsTitle -> when {
+            p < 10f -> "🚶" to stringResource(R.string.motivation_start)
+            p < 40f -> "💪" to stringResource(R.string.motivation_continue)
+            p < 70f -> "⚡" to stringResource(R.string.motivation_close)
+            p < 100f -> "🏁" to stringResource(R.string.motivation_final)
+            else -> "🎉" to stringResource(R.string.motivation_great)
         }
-        "Kaloriler" -> when {
-            p < 10f -> "🔥" to "Isın!"
-            p < 40f -> "🥵" to "Tempo!"
-            p < 70f -> "⚡" to "Devam!"
-            p < 100f -> "🏁" to "Bitir!"
-            else -> "🎯" to "Süper!"
+        caloriesTitle -> when {
+            p < 10f -> "🔥" to stringResource(R.string.motivation_warm_up_steps)
+            p < 40f -> "🥵" to stringResource(R.string.motivation_tempo_calories)
+            p < 70f -> "⚡" to stringResource(R.string.motivation_continue)
+            p < 100f -> "🏁" to stringResource(R.string.motivation_finish_goal)
+            else -> "🎯" to stringResource(R.string.motivation_awesome)
         }
-        "Mesafe" -> when {
-            p < 10f -> "🗺️" to "Kısa tur!"
-            p < 40f -> "🚶‍♂️" to "Devam!"
-            p < 70f -> "🏃" to "Yaklaştın!"
-            p < 100f -> "🏁" to "Bitir!"
-            else -> "🌟" to "Tamam!"
+        distanceTitle -> when {
+            p < 10f -> "🗺️" to stringResource(R.string.motivation_short_walk_distance)
+            p < 40f -> "🚶‍♂️" to stringResource(R.string.motivation_continue)
+            p < 70f -> "🏃" to stringResource(R.string.motivation_close)
+            p < 100f -> "🏁" to stringResource(R.string.motivation_finish_goal)
+            else -> "🌟" to stringResource(R.string.motivation_good_work)
         }
-        "Aktif Süre" -> when {
-            p < 10f -> "⏱️" to "5 dk!"
-            p < 40f -> "💪" to "Biraz daha!"
-            p < 70f -> "⚡" to "Ritim!"
-            p < 100f -> "🏁" to "Son dk!"
-            else -> "🎉" to "Tamam!"
+        activeTimeTitle -> when {
+            p < 10f -> "⏱️" to stringResource(R.string.motivation_5min)
+            p < 40f -> "💪" to stringResource(R.string.motivation_keep_going)
+            p < 70f -> "⚡" to stringResource(R.string.motivation_rhythm)
+            p < 100f -> "🏁" to stringResource(R.string.motivation_final_minutes)
+            else -> "🎉" to stringResource(R.string.motivation_done)
         }
-        else -> "⚡" to "Harekete geç!"
+        else -> "⚡" to stringResource(R.string.motivation_get_moving)
     }
 }
