@@ -23,144 +23,141 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import com.artes.securehup.stepapp.ui.theme.*
+import com.artes.securehup.stepapp.R
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.imePadding
 
 @Composable
 fun WelcomeScreen(
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DarkBackground)
-            .padding(Dimensions.paddingLarge)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge + Dimensions.paddingMedium))
-        
-        // App Logo/Icon
-        Box(
-            modifier = Modifier
-                .size(Dimensions.appIconSize)
-                .background(NeonGreen, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                tint = DarkBackground,
-                modifier = Modifier.size(Dimensions.iconSizeXLarge + Dimensions.paddingMedium)
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingExtraLarge))
-        
-        // Welcome Title
-        Text(
-            text = "Sağlık Takibi",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = TextPrimary
-        )
-        
-        Text(
-            text = "Sağlıklı yaşamın dijital arkadaşı",
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center,
-            color = TextSecondary,
-            modifier = Modifier.padding(top = Dimensions.paddingSmall)
-        )
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge + Dimensions.paddingMedium))
-        
-        // Features List
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Dimensions.paddingMedium)
-        ) {
-            FeatureCard(
-                icon = Icons.Default.Favorite,
-                title = "Günlük Takip",
-                description = "Adım, kalori ve aktivitelerinizi kaydedin"
-            )
-            
-            FeatureCard(
-                icon = Icons.Default.Favorite,
-                title = "Kişisel Hedefler",
-                description = "Size özel hedefler belirleyin ve ulaşın"
-            )
-            
-            FeatureCard(
-                icon = Icons.Default.Favorite,
-                title = "Detaylı Analiz",
-                description = "İlerlemelerinizi grafiklerle takip edin"
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
-        
-        // Progress indicator
-        LinearProgressIndicator(
-            progress = { 0.0f },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimensions.progressBarHeight)
-                .clip(RoundedCornerShape(Dimensions.progressBarHeight / 2)),
-            color = NeonGreen,
-            trackColor = DarkCard,
-        )
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingExtraLarge))
-        
-        // Start Button
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimensions.buttonHeightLarge)
-                .background(NeonGreen, RoundedCornerShape(Dimensions.cornerRadiusXLarge))
-                .clickable { onNavigateNext() },
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        containerColor = DarkBackground,
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimensions.paddingLarge, vertical = Dimensions.paddingLarge)
+                    .imePadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Başlayalım",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = DarkBackground
-                )
-                Spacer(modifier = Modifier.width(Dimensions.paddingSmall + Dimensions.paddingExtraSmall))
-                
                 Box(
                     modifier = Modifier
-                        .size(Dimensions.paddingXXLarge)
-                        .background(Color.White.copy(alpha = 0.2f), CircleShape),
+                        .fillMaxWidth()
+                        .height(Dimensions.buttonHeightLarge)
+                        .background(NeonGreen, RoundedCornerShape(Dimensions.cornerRadiusXLarge))
+                        .clickable { onNavigateNext() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = DarkBackground,
-                        modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.get_started),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = DarkBackground
+                        )
+                        Spacer(modifier = Modifier.width(Dimensions.paddingSmall + Dimensions.paddingExtraSmall))
+                        Box(
+                            modifier = Modifier
+                                .size(Dimensions.paddingXXLarge)
+                                .background(Color.White.copy(alpha = 0.2f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = DarkBackground,
+                                modifier = Modifier.size(Dimensions.iconSizeMedium - Dimensions.paddingExtraSmall)
+                            )
+                        }
+                    }
                 }
+                Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
+                Text(
+                    text = stringResource(R.string.onboarding_ready_hint),
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                    textAlign = TextAlign.Center
+                )
             }
         }
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
-        
-        Text(
-            text = "Sadece birkaç adımda hazırsınız!",
-            fontSize = 14.sp,
-            color = TextSecondary,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = Dimensions.paddingLarge),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(Dimensions.paddingXXLarge))
+            Box(
+                modifier = Modifier
+                    .size(Dimensions.appIconSize)
+                    .background(NeonGreen, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = null,
+                    tint = DarkBackground,
+                    modifier = Modifier.size(Dimensions.iconSizeXLarge + Dimensions.paddingMedium)
+                )
+            }
+            Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+            Text(
+                text = stringResource(R.string.health_tracking_title),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = TextPrimary
+            )
+            Text(
+                text = stringResource(R.string.health_tracking_subtitle),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                color = TextSecondary,
+                modifier = Modifier.padding(top = Dimensions.paddingSmall)
+            )
+            Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.paddingMedium)
+            ) {
+                FeatureCard(
+                    icon = Icons.Default.Favorite,
+                    title = stringResource(R.string.daily_tracking_title),
+                    description = stringResource(R.string.daily_tracking_desc)
+                )
+                FeatureCard(
+                    icon = Icons.Default.Favorite,
+                    title = stringResource(R.string.personal_goals_title),
+                    description = stringResource(R.string.personal_goals_desc)
+                )
+                FeatureCard(
+                    icon = Icons.Default.Favorite,
+                    title = stringResource(R.string.detailed_analysis_title),
+                    description = stringResource(R.string.detailed_analysis_desc)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            LinearProgressIndicator(
+                progress = { 0.0f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimensions.progressBarHeight)
+                    .clip(RoundedCornerShape(Dimensions.progressBarHeight / 2)),
+                color = NeonGreen,
+                trackColor = DarkCard,
+            )
+        }
     }
 }
 

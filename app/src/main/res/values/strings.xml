@@ -59,6 +59,26 @@
     <string name="finish">Bitir</string>
     <string name="personal_information">Kişisel Bilgiler</string>
     <string name="your_goals">Hedefleriniz</string>
+    <!-- Onboarding extras -->
+    <string name="health_tracking_title">Sağlık Takibi</string>
+    <string name="health_tracking_subtitle">Sağlıklı yaşamın dijital arkadaşı</string>
+    <string name="daily_tracking_title">Günlük Takip</string>
+    <string name="daily_tracking_desc">Adım, kalori ve aktivitelerinizi kaydedin</string>
+    <string name="personal_goals_title">Kişisel Hedefler</string>
+    <string name="personal_goals_desc">Size özel hedefler belirleyin ve ulaşın</string>
+    <string name="detailed_analysis_title">Detaylı Analiz</string>
+    <string name="detailed_analysis_desc">İlerlemelerinizi grafiklerle takip edin</string>
+    <string name="onboarding_ready_hint">Sadece birkaç adımda hazırsınız!</string>
+    <string name="personal_info_title">Kişisel Bilgileriniz</string>
+    <string name="personal_info_subtitle">Size özel hedefler belirleyebilmemiz için birkaç bilgiye ihtiyacımız var</string>
+    <string name="enter_your_name">Adınızı girin</string>
+    <string name="goals_edit_title">Hedeflerimi Düzenle</string>
+    <string name="goals_edit_subtitle">Sağlıklı bir yaşam için günlük hedeflerinizi belirleyin</string>
+    <string name="recommended">Önerilen</string>
+    <string name="level_beginner">Başlangıç seviyesi</string>
+    <string name="level_intermediate">Orta seviye</string>
+    <string name="level_active">Aktif seviye</string>
+    <string name="level_athlete">Sporcu seviyesi</string>
     
     <!-- Common -->
     <string name="loading">Yükleniyor...</string>

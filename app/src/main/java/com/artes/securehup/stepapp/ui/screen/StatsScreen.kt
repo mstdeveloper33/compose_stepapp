@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -174,7 +175,7 @@ fun StatsScreen(
                             DropdownMenuItem(
                                 text = {
                                     Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Icon(
                                             painter = painterResource(id = icon),
@@ -193,9 +194,16 @@ fun StatsScreen(
                                     selectedTab = index
                                     expanded = false
                                 },
-                                modifier = Modifier.background(
-                                    if (selectedTab == index) color.copy(alpha = 0.2f) else Color.Transparent
-                                )
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (selectedTab == index) color.copy(alpha = 0.2f) else Color.Transparent
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
                             )
                         }
                     }
@@ -284,6 +292,17 @@ private fun DateSelector(
         }.time
     }.reversed() // En son günü en sağda göstermek için ters çevir
 
+    val listState = rememberLazyListState()
+
+    // İlk açılışta bugüne scroll et
+    LaunchedEffect(Unit) {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val todayIndex = dates.indexOfFirst { sdf.format(it) == sdf.format(Date()) }
+        if (todayIndex >= 0) {
+            listState.scrollToItem(todayIndex)
+        }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -291,6 +310,7 @@ private fun DateSelector(
         border = androidx.compose.foundation.BorderStroke(1.dp, activeColor.copy(alpha = 0.3f))
     ) {
         LazyRow(
+            state = listState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
@@ -403,7 +423,9 @@ private fun DailySummaryCard(
     val percentageText = "${(percentage * 100).toInt()}%"
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp),
         colors = CardDefaults.cardColors(containerColor = CardBg),
         shape = RoundedCornerShape(16.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.3f))
@@ -421,23 +443,33 @@ private fun DailySummaryCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            // Stable slot for icon + value row (prevents vertical jitter across tabs)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = icon),
-                    contentDescription = null,
-                    tint = color,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "$value $unit",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(modifier = Modifier.size(40.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            painter = painterResource(id = icon),
+                            contentDescription = null,
+                            tint = color,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "$value $unit",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -448,7 +480,8 @@ private fun DailySummaryCard(
                 color = Color.White.copy(alpha = 0.8f)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            // Push motivation message to the bottom so spacing is consistent across tabs
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = when (title) {

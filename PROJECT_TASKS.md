@@ -152,59 +152,46 @@ values-en/strings.xml   -> İngilizce
 - **Responsive Tasarım**: Ekran boyutuna göre kart ve text boyutları ayarlanıyor
 - **Bottom Bar Overflow**: Kartların bottom bar'ın altına geçme sorunu çözüldü
 - **Scroll Desteği**: Scroll kaldırıldı, kartlar ekrana sığdırıldı
-- **SpaceEvenly Layout**: Kartlar arasında eşit boşluk dağılımı
-- **Dinamik Kart Yüksekliği**: Ekran boyutuna göre maksimum kart yüksekliği
-- **Layout İyileştirmesi**: Kartlar daha büyük ve okunabilir hale getirildi
-- **Responsive Boyutlandırma**: Minimum boyutlar artırıldı (130-160dp kartlar)
-- **Center Layout**: Kartlar ekranda merkezi konumlandırıldı
-- **Layout Bug Fix**: Active Time kartı içerik problemi çözüldü
-- **Kart Boyutları Artırıldı**: 18% ekran yüksekliği, min 120-170dp
-- **SpaceEvenly Layout**: Kartlar arası eşit dağılım
-- **Optimized Spacing**: Daha dengeli spacing değerleri
-- **Büyük Kart Tasarımı**: Alt görüntüdeki gibi büyük, güzel kartlar
-- **Sabit Kart Boyutları**: 130-160dp sabit boyutlar
-- **Professional Layout**: SpaceEvenly yerine spacedBy kullanımı
-- **4. Kart Problemi Çözüldü**: Active Time kartı eksik görünme problemi
-- **Optimized Scroll**: Gerektiğinde scroll, normal durumlarda scroll yok
-- **Perfect Fit**: Tüm kartlar ekranda görünür ve erişilebilir
-- **Scroll-Free Layout**: Hiç scroll olmadan tam ekrana sığdırılmış
-- **Dinamik Hesaplama**: Ekran yüksekliğine göre otomatik boyutlandırma
-- **SpaceEvenly Perfect**: Kartlar arası mükemmel eşit dağılım
-- **Her Cihazda Uyumlu**: Küçük-büyük tüm ekranlarda aynı yapı
-- **Bottom Padding Optimizasyonu**: Active Time ile bottom bar arası boşluk azaltıldı
-- **Perfect Spacing**: 60-80dp bottom padding (önceden 80-120dp)
-- **Minimal Gap**: Bottom bar ile optimal mesafe
 
-#### Test Edilen Özellikler
-- [x] StatsScreen dil değişikliği
-- [x] ProfileEditScreen dil değişikliği  
-- [x] GoalsEditScreen dil değişikliği
-- [x] Progress metinleri dinamik
-- [x] Tüm birim metinleri dinamik
-- [x] Trend başlıkları dinamik
-- [x] Gün kısaltmaları dile göre değişiyor
-- [x] Tarih formatları locale'e göre
-- [x] Tüm hard-coded locale'ler düzeltildi
-- [x] HomeScreen motivasyon mesajları dinamik
-- [x] "Harekete geç!" ve tüm motivasyon metinleri
-- [x] Active Time kartı boyut sorunu düzeltildi
-- [x] Tüm kartlar aynı boyutta görünüyor
-- [x] Responsive tasarım uygulandı
-- [x] Bottom bar overflow sorunu çözüldü
-- [x] Scroll kaldırıldı, kartlar ekrana sığdırıldı
-- [x] SpaceEvenly layout ile eşit dağılım → CenterVertically layout
-- [x] Dinamik kart boyutlandırması iyileştirildi
-- [x] Kartlar daha büyük ve okunabilir hale getirildi
-- [x] Center layout ile daha güzel görünüm
-- [x] Minimum boyutlar artırıldı (120-170dp)
-- [x] Active Time kartı bug'ı düzeltildi
-- [x] SpaceEvenly layout optimizasyonu
-- [x] Kartlar arası spacing optimize edildi
-- [x] Farklı ekran boyutları destekleniyor
-- [x] Tüm string kaynakları çalışıyor
-- [x] Build başarılı
+## 2025-08-18 — Onboarding Ekranları: Scroll Kaldırma ve Alt Sabit Butonlar
 
-### Gelecek Geliştirmeler
-- Daha fazla dil desteği (Almanca, Fransızca, vb.)
-- Onboarding ekranlarının string kaynaklarına geçirilmesi
-- Sistem dili değişikliği testleri
+### Sorun
+- Onboarding ekranlarında gereksiz `verticalScroll` kullanımı vardı; butonlar sayfa sonunda scroll içinde kalıyordu.
+
+### Çözüm
+- Tüm onboarding ekranları `Scaffold` ile yapılandırıldı, alt sabit butonlar `bottomBar` içinde konumlandırıldı.
+- İçerik üst-orta-alt bölgeler arasında `Spacer(weight = 1f)` ile esnetilerek responsive yerleşim sağlandı.
+- Sistem çubukları ve klavye için `WindowInsets.safeDrawing` ve `imePadding()` kullanıldı.
+
+### Değişen Dosyalar
+- `app/src/main/java/com/artes/securehup/stepapp/ui/screen/onboarding/WelcomeScreen.kt`
+  - `verticalScroll` kaldırıldı
+  - `Scaffold` + `bottomBar` eklendi (Başla butonu ve hint)
+  - Progress bar içerik alanının en altında, butondan ayrı konumlandırıldı
+- `app/src/main/java/com/artes/securehup/stepapp/ui/screen/onboarding/PersonalInfoScreen.kt`
+  - `Scaffold` + alt sabit Devam Et butonu eklendi
+  - Form alanları esnek yerleşimle düzenlendi, scroll kaldırıldı
+  - `WindowInsets.safeDrawing` ve `imePadding()` ile inset yönetimi
+  - Uyarılar için `@Suppress("UNUSED_PARAMETER")` eklendi
+- `app/src/main/java/com/artes/securehup/stepapp/ui/screen/onboarding/GoalsScreen.kt`
+  - `Scaffold` + alt sabit Kaydet butonu eklendi
+  - Hedef tipleri ve kart listesi scroll olmadan sığacak şekilde aralıklarla düzenlendi
+  - `@Suppress("UNUSED_PARAMETER")` ile kullanılmayan parametre uyarısı bastırıldı
+
+### Teknik Notlar
+- Alt butonlar `RoundedCornerShape(cornerRadiusXLarge)` ile görsel tutarlılık sağlıyor.
+- Progress bar'larda gereksiz `clip` kaldırıldı; performans ve sadeleşme.
+- Build: `./gradlew :app:assembleDebug` başarılı (uyarılar yalnızca deprecated API kullanımları).
+
+### Test
+- [x] Küçük ekranlarda butonların görünürlüğü
+- [x] Klavye açıldığında butonların taşmaması (`imePadding`)
+- [x] Dark/Light tema ile kontrast
+- [ ] Farklı ekran yoğunlukları
+
+## 2025-08-18 — Stats Takvimi: İlk Açılışta Bugüne Odak
+
+- `StatsScreen -> DateSelector` içinde `rememberLazyListState` ve `LaunchedEffect(Unit)` eklendi.
+- İlk render’da bugünün indeksi hesaplanıp `listState.scrollToItem(todayIndex)` ile LazyRow bugüne kaydırılıyor.
+- Görsel durumlar (seçili/bugün) aynen korunuyor; sadece başlangıç odağı kullanıcı deneyimini iyileştiriyor.
+- Not: Derlemede KSP kaynaklı “duplicate class” uyarıları görülürse `./gradlew clean assembleDebug` ile temiz derleme önerilir.

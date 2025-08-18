@@ -59,6 +59,26 @@
     <string name="finish">Finish</string>
     <string name="personal_information">Personal Information</string>
     <string name="your_goals">Your Goals</string>
+    <!-- Onboarding extras -->
+    <string name="health_tracking_title">Health Tracking</string>
+    <string name="health_tracking_subtitle">Your digital companion for a healthy life</string>
+    <string name="daily_tracking_title">Daily Tracking</string>
+    <string name="daily_tracking_desc">Record your steps, calories and activities</string>
+    <string name="personal_goals_title">Personal Goals</string>
+    <string name="personal_goals_desc">Set and achieve goals tailored to you</string>
+    <string name="detailed_analysis_title">Detailed Analysis</string>
+    <string name="detailed_analysis_desc">Track your progress with charts</string>
+    <string name="onboarding_ready_hint">You are just a few steps away!</string>
+    <string name="personal_info_title">Your Personal Information</string>
+    <string name="personal_info_subtitle">We need a few details to set personalized goals</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="goals_edit_title">Edit My Goals</string>
+    <string name="goals_edit_subtitle">Set your daily goals for a healthier life</string>
+    <string name="recommended">Recommended</string>
+    <string name="level_beginner">Beginner level</string>
+    <string name="level_intermediate">Intermediate level</string>
+    <string name="level_active">Active level</string>
+    <string name="level_athlete">Athlete level</string>
     
     <!-- Common -->
     <string name="loading">Loading...</string>
