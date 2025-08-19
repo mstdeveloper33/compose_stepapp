@@ -1,3 +1,14 @@
+## Test Altyapısı (Unit)
+
+- libs.versions.toml içine unit test bağımlılık versiyonları eklendi: mockk, coroutines-test, turbine, truth.
+- app/build.gradle.kts içine unit test bağımlılıkları eklendi.
+- Bir sonraki adım: MainDispatcherRule ve örnek unit test dosyaları oluşturulacak.
+
+### Eklenen Unit Testler
+- GetTodayHealthDataUseCaseTest, UpdateStepsUseCaseTest
+- HomeViewModelTest, StatsViewModelTest, ProfileViewModelTest, MainViewModelTest
+- CalorieCalculatorTest
+
 # Proje Görev Günlüğü
 
 ## 2025-08-12 — Splash Screen Entegrasyonu

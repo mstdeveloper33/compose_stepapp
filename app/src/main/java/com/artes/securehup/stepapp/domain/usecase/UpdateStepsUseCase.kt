@@ -23,6 +23,11 @@ class UpdateStepsUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val calorieCalculator: CalorieCalculator
 ) {
+    private companion object {
+        // "Hareket halinde" saymak için minimum kadans (adım/dakika)
+        private const val MIN_ACTIVE_CADENCE_SPM = 40.0
+    }
+
     /**
      * Hassas güncelleme: delta adım ve süre ile hesaplar
      * @param totalSteps Device'in bugünkü toplam adımı
@@ -48,6 +53,9 @@ class UpdateStepsUseCase @Inject constructor(
                     else -> ActivityType.RUNNING_FAST
                 }
 
+                // Hareket kontrolü: boşta kalınan süreyi filtrele
+                val isMoving = deltaSteps > 0 || cadenceSpm >= MIN_ACTIVE_CADENCE_SPM
+
                 // Önce bugünkü mevcut değerleri oku
                 val today = Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, 0)
@@ -57,29 +65,31 @@ class UpdateStepsUseCase @Inject constructor(
                 }.time
                 val todayData = healthRepository.getHealthDataByDate(today)
 
-                // Delta kaloriyi hesapla ve bugünkü toplam kaloriye ekle
-                val deltaMinutes = deltaMillis / 60000.0
-                val deltaCalories = calorieCalculator.calculateCaloriesFromActivity(
-                    durationMinutes = deltaMinutes,
-                    userProfile = userProfile,
-                    activityType = activityType
-                )
-                val newCaloriesTotal = (todayData?.calories ?: 0) + deltaCalories
-                healthRepository.updateCaloriesForToday(newCaloriesTotal)
+                if (isMoving && deltaMillis > 0) {
+                    // Delta kaloriyi hesapla ve bugünkü toplam kaloriye ekle
+                    val deltaMinutes = deltaMillis / 60000.0
+                    val deltaCalories = calorieCalculator.calculateCaloriesFromActivity(
+                        durationMinutes = deltaMinutes,
+                        userProfile = userProfile,
+                        activityType = activityType
+                    )
+                    val newCaloriesTotal = (todayData?.calories ?: 0) + deltaCalories
+                    healthRepository.updateCaloriesForToday(newCaloriesTotal)
 
-                // Delta mesafe (aktivite tipine göre adım boyu)
-                val deltaDistance = calorieCalculator.calculateDistanceFromSteps(
-                    steps = deltaSteps,
-                    userProfile = userProfile,
-                    activityType = activityType
-                )
-                val newDistanceTotal = (todayData?.distance ?: 0.0) + deltaDistance
-                healthRepository.updateDistanceForToday(newDistanceTotal)
+                    // Delta mesafe (aktivite tipine göre adım boyu)
+                    val deltaDistance = calorieCalculator.calculateDistanceFromSteps(
+                        steps = deltaSteps,
+                        userProfile = userProfile,
+                        activityType = activityType
+                    )
+                    val newDistanceTotal = (todayData?.distance ?: 0.0) + deltaDistance
+                    healthRepository.updateDistanceForToday(newDistanceTotal)
 
-                // Delta aktif süre (dakika)
-                val deltaActiveMinutes = (deltaMillis / 60000.0).toLong()
-                val newActiveMinutesTotal = (todayData?.activeTime ?: 0L) + deltaActiveMinutes
-                healthRepository.updateActiveTimeForToday(newActiveMinutesTotal)
+                    // Delta aktif süre (dakika)
+                    val deltaActiveMinutes = (deltaMillis / 60000.0).toLong()
+                    val newActiveMinutesTotal = (todayData?.activeTime ?: 0L) + deltaActiveMinutes
+                    healthRepository.updateActiveTimeForToday(newActiveMinutesTotal)
+                }
             }
             
             Result.success(Unit)
